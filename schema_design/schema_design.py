@@ -16,7 +16,7 @@ if __name__ == "__main__":
     
     CREATE TABLE IF NOT EXISTS content.genre (
         id UUID PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        name TEXT NOT NULL,
         description TEXT,
         created TIMESTAMP WITH TIME ZONE,
         modified TIMESTAMP WITH TIME ZONE
@@ -24,20 +24,20 @@ if __name__ == "__main__":
 
     CREATE TABLE IF NOT EXISTS content.film_work (
         id UUID PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
+        title TEXT NOT NULL,
         description TEXT,
         creation_date DATE,
-        certificate VARCHAR(255),
-        file_path VARCHAR(255),
+        certificate TEXT,
+        file_path TEXT,
         rating FLOAT,
-        type VARCHAR(255) NOT NULL,
+        type TEXT NOT NULL,
         created TIMESTAMP WITH TIME ZONE,
         modified TIMESTAMP WITH TIME ZONE
     );
     
     CREATE TABLE IF NOT EXISTS content.person (
         id UUID PRIMARY KEY,
-        full_name VARCHAR(255) NOT NULL,
+        full_name TEXT NOT NULL,
         birth_date DATE,
         created TIMESTAMP WITH TIME ZONE,
         modified TIMESTAMP WITH TIME ZONE
@@ -45,8 +45,8 @@ if __name__ == "__main__":
     
     CREATE TABLE IF NOT EXISTS content.genre_film_work (
         id UUID PRIMARY KEY,
-        film_work_id uuid NOT NULL,
-        genre_id uuid NOT NULL,
+        film_work_id UUID NOT NULL,
+        genre_id UUID NOT NULL,
         created TIMESTAMP WITH TIME ZONE
     );
     

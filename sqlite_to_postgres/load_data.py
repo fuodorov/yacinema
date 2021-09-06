@@ -4,7 +4,6 @@ import psycopg2
 
 from pathlib import Path
 from psycopg2.extensions import connection as _connection
-from psycopg2.extras import DictCursor
 
 from utils.loader import SQLiteLoader
 from utils.saver import PostgresSaver
@@ -28,5 +27,5 @@ if __name__ == '__main__':
     }
     sqlite_path = Path(__file__).parent.joinpath('db.sqlite')
 
-    with sqlite3.connect(sqlite_path) as sqlite_conn, psycopg2.connect(**dsl, cursor_factory=DictCursor) as pg_conn:
+    with sqlite3.connect(sqlite_path) as sqlite_conn, psycopg2.connect(**dsl) as pg_conn:
         load_from_sqlite(sqlite_conn, pg_conn)

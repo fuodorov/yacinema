@@ -31,6 +31,7 @@ class SQLiteLoader():
         self.conn = connection
         self.conn.row_factory = self.dict_factory
 
+    @staticmethod
     def dict_factory(cursor: sqlite3.Cursor, row: tuple) -> dict:
         """Factory for strings as dict."""
         d = {}
@@ -45,7 +46,7 @@ class SQLiteLoader():
         SELECT DISTINCT id, name FROM writers
         """
         for writer in self.conn.execute(SQL):
-            writers[writer["id"]] = writer
+            writers[writer['id']] = writer
         return writers
 
     def _transform_row(self, row: dict, writers: dict) -> dict:
@@ -77,5 +78,11 @@ class SQLiteLoader():
 
     def load_movies(self) -> List[dict]:
         """Basic method for unloading data from MySQL."""
+        movies = []
         writers = self.load_writers_names()
-        return [self._transform_row(row, writers) for row in self.conn.execute(self.SQL)]
+
+        for row in self.conn.execute(self.SQL):
+            transformed_row = self._transform_row(row, writers)
+            movies.append(transformed_row)
+
+        return movies
