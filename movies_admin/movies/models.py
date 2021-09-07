@@ -18,6 +18,7 @@ class Person(TimeStampedModel):
     class Meta:
         verbose_name = _('Person')
         verbose_name_plural = _('Persons')
+        managed = False
         db_table = f'{CONTENT_SCHEMA}"."person'
 
     def __str__(self):
@@ -32,6 +33,7 @@ class Genre(TimeStampedModel):
     class Meta:
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
+        managed = False
         db_table = f'{CONTENT_SCHEMA}"."genre'
 
     def __str__(self):
@@ -58,6 +60,7 @@ class FilmWork(TimeStampedModel):
     class Meta:
         verbose_name = _('Film')
         verbose_name_plural = _('Films')
+        managed = False
         db_table = f'{CONTENT_SCHEMA}"."film_work'
 
     def __str__(self):
@@ -81,6 +84,7 @@ class PersonFilmWork(models.Model):
         verbose_name = _('Person')
         verbose_name_plural = _('Persons')
         db_table = f'{CONTENT_SCHEMA}"."person_film_work'
+        managed = False
         unique_together = ('film_work', 'person', 'role')
 
 
@@ -94,4 +98,5 @@ class GenreFilmWork(models.Model):
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
         db_table = f'{CONTENT_SCHEMA}"."genre_film_work'
+        managed = False
         unique_together = ('film_work', 'genre')
