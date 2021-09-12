@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator as Min, MaxValueValidator as Max
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 
@@ -52,8 +52,7 @@ class FilmWork(TimeStampedModel):
     creation_date = models.DateField(_('Creation date'), null=True, blank=True)
     certificate = models.TextField(_('Certificate'), blank=True)
     file_path = models.FileField(_('File'), upload_to='film_works/', null=True, blank=True)
-    rating = models.FloatField(_('Rating'), validators=[MinValueValidator(0), MaxValueValidator(10)],
-                               null=True, blank=True)
+    rating = models.FloatField(_('Rating'), validators=[Min(0), Max(10)], null=True, blank=True)
     type = models.TextField(_('Type'), choices=FilmWorkType.choices, blank=True)
     genres = models.ManyToManyField('movies.Genre', through='movies.GenreFilmWork')
     persons = models.ManyToManyField('movies.Person', through='movies.PersonFilmWork')
@@ -67,8 +66,14 @@ class FilmWork(TimeStampedModel):
     def __str__(self):
         return self.title
 
-    def list_genres(self):
-        return ', '.join([str(genre) for genre in self.genres.all()])
+    def actors(self):
+        return [actor.person.id for actor in PersonFilmWork.objects.filter(film_work=self.id, role='actor')]
+
+    def writers(self):
+        return [writer.person.id for writer in PersonFilmWork.objects.filter(film_work=self.id, role='writers')]
+
+    def directors(self):
+        return [director.person.id for director in PersonFilmWork.objects.filter(film_work=self.id, role='director')]
 
 
 class RoleType(models.TextChoices):
