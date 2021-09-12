@@ -61,17 +61,17 @@ class SQLiteLoader():
 
         actors_names = []
         if row['actors_ids'] is not None and row['actors_names'] is not None:
-            actors_names = [x for x in row['actors_names'].split(',') if x != 'N/A']
+            actors_names = [x for x in row['actors_names'].split(', ') if x != 'N/A']
 
         return {
             'id': row['id'],
-            'genre': row['genre'].replace(' ', '').split(','),
+            'genre': row['genre'].replace(' ', '').split(', '),
             'actors': actors_names,
             'writers': [x['name'] for x in movie_writers],
             'imdb_rating': float(row['imdb_rating']) if row['imdb_rating'] != 'N/A' else None,
             'title': row['title'],
             'director': [
-                x.strip() for x in row['director'].split(',')
+                x.strip() for x in row['director'].split(', ')
             ] if row['director'] != 'N/A' else None,
             'description': row['plot'] if row['plot'] != 'N/A' else None
         }

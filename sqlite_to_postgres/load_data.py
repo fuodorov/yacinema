@@ -29,3 +29,5 @@ if __name__ == '__main__':
 
     with sqlite3.connect(sqlite_path) as sqlite_conn, psycopg2.connect(**dsl) as pg_conn:
         load_from_sqlite(sqlite_conn, pg_conn)
+    sqlite_conn.close()
+    pg_conn.close()

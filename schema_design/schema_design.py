@@ -64,3 +64,4 @@ if __name__ == "__main__":
 
     with psycopg2.connect(**dsl) as conn, conn.cursor() as cursor:
         cursor.execute(SQL)
+    conn.close()

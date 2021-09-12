@@ -136,88 +136,39 @@ class PostgresSaver():
 
     def insert_film_work(self):
         """Inserts data from the local film_work table into PostgreSQL."""
-        SQL = """
-        INSERT INTO content.film_work (
-            id,
-            title,
-            description,
-            creation_date,
-            certificate,
-            file_path,
-            rating,
-            type,
-            created,
-            modified
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
         with self.conn.cursor() as cursor:
-            for row in self.film_work:
-                line = tuple(val for val in row.values())
-                cursor.execute(SQL, line)
+            args = [tuple(val for val in row.values()) for row in self.film_work]
+            args_bytes = b','.join(cursor.mogrify('(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', x) for x in args)
+            cursor.execute(b'INSERT INTO content.film_work VALUES ' + args_bytes)
 
     def insert_genre(self):
         """Inserts data from the local film_work table into PostgreSQL."""
-        SQL = """
-        INSERT INTO content.genre (
-            id,
-            name,
-            description,
-            created,
-            modified
-        ) VALUES (%s, %s, %s, %s, %s)
-        """
         with self.conn.cursor() as cursor:
-            for row in self.genre:
-                line = tuple(val for val in row.values())
-                cursor.execute(SQL, line)
+            args = [tuple(val for val in row.values()) for row in self.genre]
+            args_bytes = b','.join(cursor.mogrify('(%s, %s, %s, %s, %s)', x) for x in args)
+            cursor.execute(b'INSERT INTO content.genre VALUES ' + args_bytes)
 
     def insert_person(self):
         """Inserts data from the local person table into PostgreSQL."""
-        SQL = """
-        INSERT INTO content.person (
-            id,
-            full_name,
-            birth_date,
-            created,
-            modified
-        ) VALUES (%s, %s, %s, %s, %s)
-        """
         with self.conn.cursor() as cursor:
-            for row in self.person:
-                line = tuple(val for val in row.values())
-                cursor.execute(SQL, line)
+            args = [tuple(val for val in row.values()) for row in self.person]
+            args_bytes = b','.join(cursor.mogrify('(%s, %s, %s, %s, %s)', x) for x in args)
+            cursor.execute(b'INSERT INTO content.person VALUES ' + args_bytes)
 
     def insert_genre_film_work(self):
         """Inserts data from the local genre_film_work table into PostgreSQL."""
-        SQL = """
-        INSERT INTO content.genre_film_work (
-            id,
-            film_work_id,
-            genre_id,
-            created
-        ) VALUES (%s, %s, %s, %s)
-        """
         with self.conn.cursor() as cursor:
-            for row in self.genre_film_work:
-                line = tuple(val for val in row.values())
-                cursor.execute(SQL, line)
+            args = [tuple(val for val in row.values()) for row in self.genre_film_work]
+            args_bytes = b','.join(cursor.mogrify('(%s, %s, %s, %s)', x) for x in args)
+            cursor.execute(b'INSERT INTO content.genre_film_work VALUES ' + args_bytes)
 
     def insert_person_film_work(self):
         """Inserts data from local table person_film_work into PostgreSQL."""
-        SQL = """
-        INSERT INTO content.person_film_work (
-            id,
-            film_work_id,
-            person_id,
-            role,
-            created
-        ) VALUES (%s, %s, %s, %s, %s)
-        ON CONFLICT (film_work_id, person_id, role) DO NOTHING
-        """
         with self.conn.cursor() as cursor:
-            for row in self.person_film_work:
-                line = tuple(val for val in row.values())
-                cursor.execute(SQL, line)
+            args = [tuple(val for val in row.values()) for row in self.person_film_work]
+            args_bytes = b','.join(cursor.mogrify('(%s, %s, %s, %s, %s)', x) for x in args)
+            cursor.execute(b'INSERT INTO content.person_film_work VALUES ' + args_bytes +
+                           b' ON CONFLICT (film_work_id, person_id, role) DO NOTHING')
 
     def save_all_data(self, data: List[dict]):
         """Basic method that processes data from MySQL and loads it into PostgreSQL."""
