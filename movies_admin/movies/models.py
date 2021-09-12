@@ -67,13 +67,16 @@ class FilmWork(TimeStampedModel):
         return self.title
 
     def actors(self):
-        return [actor.person.id for actor in PersonFilmWork.objects.filter(film_work=self.id, role='actor')]
+        return [actor.person.id for actor in PersonFilmWork.objects.filter(film_work=self.id,
+                                                                           role=RoleType.ACTOR)]
 
     def writers(self):
-        return [writer.person.id for writer in PersonFilmWork.objects.filter(film_work=self.id, role='writers')]
+        return [writer.person.id for writer in PersonFilmWork.objects.filter(film_work=self.id,
+                                                                             role=RoleType.WRITER)]
 
     def directors(self):
-        return [director.person.id for director in PersonFilmWork.objects.filter(film_work=self.id, role='director')]
+        return [director.person.id for director in PersonFilmWork.objects.filter(film_work=self.id,
+                                                                                 role=RoleType.DIRECTOR)]
 
 
 class RoleType(models.TextChoices):
