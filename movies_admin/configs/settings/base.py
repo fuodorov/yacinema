@@ -3,11 +3,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', '3z21_q_q!*y_k0_)1igs6wdt=do^yu&6z&esi3^q4b8k9u(5hc')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = False
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []#os.getenv('ALLOWED_HOSTS').split()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -52,15 +50,15 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'movies'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
-CONTENT_SCHEMA = os.getenv('CONTENT_SCHEMA', 'content')
+CONTENT_SCHEMA = os.getenv('CONTENT_SCHEMA')
 
 AUTH_PASSWORD_VALIDATORS = [
     {
