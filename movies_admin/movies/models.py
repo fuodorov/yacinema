@@ -19,7 +19,7 @@ class Person(TimeStampedModel):
         verbose_name = _('Person')
         verbose_name_plural = _('Persons')
         managed = False
-        db_table = f'{CONTENT_SCHEMA}"."person'
+        db_table = f'"{CONTENT_SCHEMA}"."person"'
 
     def __str__(self):
         return self.full_name
@@ -34,7 +34,7 @@ class Genre(TimeStampedModel):
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
         managed = False
-        db_table = f'{CONTENT_SCHEMA}"."genre'
+        db_table = f'"{CONTENT_SCHEMA}"."genre"'
 
     def __str__(self):
         return self.name
@@ -61,22 +61,25 @@ class FilmWork(TimeStampedModel):
         verbose_name = _('Film')
         verbose_name_plural = _('Films')
         managed = False
-        db_table = f'{CONTENT_SCHEMA}"."film_work'
+        db_table = f'"{CONTENT_SCHEMA}"."film_work"'
 
     def __str__(self):
         return self.title
 
     def actors(self):
-        return [actor.person.id for actor in PersonFilmWork.objects.filter(film_work=self.id,
-                                                                           role=RoleType.ACTOR)]
+        return [
+            actor.person.id for actor in PersonFilmWork.objects.filter(film_work=self.id, role=RoleType.ACTOR)
+        ]
 
     def writers(self):
-        return [writer.person.id for writer in PersonFilmWork.objects.filter(film_work=self.id,
-                                                                             role=RoleType.WRITER)]
+        return [
+            writer.person.id for writer in PersonFilmWork.objects.filter(film_work=self.id, role=RoleType.WRITER)
+        ]
 
     def directors(self):
-        return [director.person.id for director in PersonFilmWork.objects.filter(film_work=self.id,
-                                                                                 role=RoleType.DIRECTOR)]
+        return [
+            director.person.id for director in PersonFilmWork.objects.filter(film_work=self.id, role=RoleType.DIRECTOR)
+        ]
 
 
 class RoleType(models.TextChoices):
@@ -95,7 +98,7 @@ class PersonFilmWork(models.Model):
     class Meta:
         verbose_name = _('Person')
         verbose_name_plural = _('Persons')
-        db_table = f'{CONTENT_SCHEMA}"."person_film_work'
+        db_table = f'"{CONTENT_SCHEMA}"."person_film_work"'
         managed = False
         unique_together = ('film_work', 'person', 'role')
 
@@ -109,6 +112,6 @@ class GenreFilmWork(models.Model):
     class Meta:
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
-        db_table = f'{CONTENT_SCHEMA}"."genre_film_work'
+        db_table = f'"{CONTENT_SCHEMA}"."genre_film_work"'
         managed = False
         unique_together = ('film_work', 'genre')

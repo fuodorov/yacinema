@@ -1,4 +1,5 @@
 from rest_framework.fields import ReadOnlyField
+from rest_framework.relations import HyperlinkedRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from movies.models import Person, Genre, FilmWork
