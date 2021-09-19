@@ -1,7 +1,4 @@
 venv/
-files/
-images/
-tasks/
 
 .idea
 .dockerignore

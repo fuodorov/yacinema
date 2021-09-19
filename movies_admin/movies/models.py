@@ -7,7 +7,7 @@ from model_utils.models import TimeStampedModel
 from django.conf import settings
 
 
-CONTENT_SCHEMA = getattr(settings, 'CONTENT_SCHEMA', 'content')
+SCHEMA = getattr(settings, 'SCHEMA', 'content')
 
 
 class Person(TimeStampedModel):
@@ -19,7 +19,7 @@ class Person(TimeStampedModel):
         verbose_name = _('Person')
         verbose_name_plural = _('Persons')
         managed = False
-        db_table = f'"{CONTENT_SCHEMA}"."person"'
+        db_table = f'"{SCHEMA}"."person"'
 
     def __str__(self):
         return self.full_name
@@ -34,7 +34,7 @@ class Genre(TimeStampedModel):
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
         managed = False
-        db_table = f'"{CONTENT_SCHEMA}"."genre"'
+        db_table = f'"{SCHEMA}"."genre"'
 
     def __str__(self):
         return self.name
@@ -61,7 +61,7 @@ class FilmWork(TimeStampedModel):
         verbose_name = _('Film')
         verbose_name_plural = _('Films')
         managed = False
-        db_table = f'"{CONTENT_SCHEMA}"."film_work"'
+        db_table = f'"{SCHEMA}"."film_work"'
 
     def __str__(self):
         return self.title
@@ -92,7 +92,7 @@ class PersonFilmWork(models.Model):
     class Meta:
         verbose_name = _('Person')
         verbose_name_plural = _('Persons')
-        db_table = f'"{CONTENT_SCHEMA}"."person_film_work"'
+        db_table = f'"{SCHEMA}"."person_film_work"'
         managed = False
         unique_together = ('film_work', 'person', 'role')
 
@@ -106,6 +106,6 @@ class GenreFilmWork(models.Model):
     class Meta:
         verbose_name = _('Genre')
         verbose_name_plural = _('Genres')
-        db_table = f'"{CONTENT_SCHEMA}"."genre_film_work"'
+        db_table = f'"{SCHEMA}"."genre_film_work"'
         managed = False
         unique_together = ('film_work', 'genre')

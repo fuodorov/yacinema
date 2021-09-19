@@ -3,18 +3,20 @@ import psycopg2
 
 
 if __name__ == "__main__":
+    SCHEMA = os.environ.get('DB_SCHEMA', 'content')
+
     dsl = {
-        'dbname': os.getenv('DB_NAME', 'movies'),
-        'user': os.getenv('DB_USER', 'postgres'),
-        'host': os.getenv('DB_HOST', 'localhost'),
-        'port': os.getenv('DB_PORT', '5432'),
-        'password': os.getenv('DB_PASSWORD', 'postgres'),
+        'dbname': os.environ.get('DB_NAME', 'movies'),
+        'user': os.environ.get('DB_USER', 'postgres'),
+        'host': os.environ.get('DB_HOST', 'localhost'),
+        'port': os.environ.get('DB_PORT', '5432'),
+        'password': os.environ.get('DB_PASSWORD', 'postgres'),
     }
 
-    SQL = """
-    CREATE SCHEMA IF NOT EXISTS content;
+    SQL = f"""    
+    CREATE SCHEMA IF NOT EXISTS {SCHEMA};
     
-    CREATE TABLE IF NOT EXISTS content.genre (
+    CREATE TABLE IF NOT EXISTS {SCHEMA}.genre (
         id UUID PRIMARY KEY,
         name TEXT NOT NULL,
         description TEXT,
@@ -22,7 +24,7 @@ if __name__ == "__main__":
         modified TIMESTAMP WITH TIME ZONE
     );
 
-    CREATE TABLE IF NOT EXISTS content.film_work (
+    CREATE TABLE IF NOT EXISTS {SCHEMA}.film_work (
         id UUID PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT,
@@ -35,7 +37,7 @@ if __name__ == "__main__":
         modified TIMESTAMP WITH TIME ZONE
     );
     
-    CREATE TABLE IF NOT EXISTS content.person (
+    CREATE TABLE IF NOT EXISTS {SCHEMA}.person (
         id UUID PRIMARY KEY,
         full_name TEXT NOT NULL,
         birth_date DATE,
@@ -43,7 +45,7 @@ if __name__ == "__main__":
         modified TIMESTAMP WITH TIME ZONE
     );
     
-    CREATE TABLE IF NOT EXISTS content.person_film_work (
+    CREATE TABLE IF NOT EXISTS {SCHEMA}.person_film_work (
         id UUID PRIMARY KEY,
         film_work_id UUID NOT NULL,
         person_id UUID NOT NULL,
@@ -51,17 +53,21 @@ if __name__ == "__main__":
         created TIMESTAMP WITH TIME ZONE
     );
     
-    CREATE TABLE IF NOT EXISTS content.genre_film_work (
+    CREATE TABLE IF NOT EXISTS {SCHEMA}.genre_film_work (
         id UUID PRIMARY KEY,
         film_work_id UUID NOT NULL,
         genre_id UUID NOT NULL,
         created TIMESTAMP WITH TIME ZONE
     );
     
-    CREATE UNIQUE INDEX film_work_genre ON content.genre_film_work (film_work_id, genre_id);
-    CREATE UNIQUE INDEX film_work_person_role ON content.person_film_work (film_work_id, person_id, role);
+    CREATE UNIQUE INDEX film_work_genre ON {SCHEMA}.genre_film_work (film_work_id, genre_id);
+    CREATE UNIQUE INDEX film_work_person_role ON {SCHEMA}.person_film_work (film_work_id, person_id, role);
     """
 
     with psycopg2.connect(**dsl) as conn, conn.cursor() as cursor:
-        cursor.execute(SQL)
+        try:
+            cursor.execute(SQL)
+            print(f'Schema {SCHEMA} is created.')
+        except psycopg2.errors.DuplicateTable as e:
+            print(f'Schema {SCHEMA} already exists.')
     conn.close()

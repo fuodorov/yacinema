@@ -19,11 +19,11 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
 
 if __name__ == '__main__':
     dsl = {
-        'dbname': os.getenv('DB_NAME', 'movies'),
-        'user': os.getenv('DB_USER', 'postgres'),
-        'host': os.getenv('DB_HOST', 'localhost'),
-        'port': os.getenv('DB_PORT', '5432'),
-        'password': os.getenv('DB_PASSWORD', 'postgres'),
+        'dbname': os.environ.get('DB_NAME', 'movies'),
+        'user': os.environ.get('DB_USER', 'postgres'),
+        'host': os.environ.get('DB_HOST', 'localhost'),
+        'port': os.environ.get('DB_PORT', '5432'),
+        'password': os.environ.get('DB_PASSWORD', 'postgres'),
     }
     sqlite_path = Path(__file__).parent.joinpath('db.sqlite')
 
