@@ -13,9 +13,8 @@ if __name__ == "__main__":
         'password': os.environ.get('DB_PASSWORD', 'postgres'),
     }
 
-    SQL = f"""    
+    SQL = f"""
     CREATE SCHEMA IF NOT EXISTS {SCHEMA};
-    
     CREATE TABLE IF NOT EXISTS {SCHEMA}.genre (
         id UUID PRIMARY KEY,
         name TEXT NOT NULL,
@@ -23,7 +22,6 @@ if __name__ == "__main__":
         created TIMESTAMP WITH TIME ZONE,
         modified TIMESTAMP WITH TIME ZONE
     );
-
     CREATE TABLE IF NOT EXISTS {SCHEMA}.film_work (
         id UUID PRIMARY KEY,
         title TEXT NOT NULL,
@@ -36,7 +34,6 @@ if __name__ == "__main__":
         created TIMESTAMP WITH TIME ZONE,
         modified TIMESTAMP WITH TIME ZONE
     );
-    
     CREATE TABLE IF NOT EXISTS {SCHEMA}.person (
         id UUID PRIMARY KEY,
         full_name TEXT NOT NULL,
@@ -44,7 +41,6 @@ if __name__ == "__main__":
         created TIMESTAMP WITH TIME ZONE,
         modified TIMESTAMP WITH TIME ZONE
     );
-    
     CREATE TABLE IF NOT EXISTS {SCHEMA}.person_film_work (
         id UUID PRIMARY KEY,
         film_work_id UUID NOT NULL,
@@ -52,14 +48,12 @@ if __name__ == "__main__":
         role TEXT NOT NULL,
         created TIMESTAMP WITH TIME ZONE
     );
-    
     CREATE TABLE IF NOT EXISTS {SCHEMA}.genre_film_work (
         id UUID PRIMARY KEY,
         film_work_id UUID NOT NULL,
         genre_id UUID NOT NULL,
         created TIMESTAMP WITH TIME ZONE
     );
-    
     CREATE UNIQUE INDEX film_work_genre ON {SCHEMA}.genre_film_work (film_work_id, genre_id);
     CREATE UNIQUE INDEX film_work_person_role ON {SCHEMA}.person_film_work (film_work_id, person_id, role);
     """
@@ -68,6 +62,6 @@ if __name__ == "__main__":
         try:
             cursor.execute(SQL)
             print(f'Schema {SCHEMA} is created.')
-        except psycopg2.errors.DuplicateTable as e:
+        except psycopg2.errors.DuplicateTable:
             print(f'Schema {SCHEMA} already exists.')
     conn.close()

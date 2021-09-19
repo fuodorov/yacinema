@@ -19,9 +19,8 @@ class SQLiteLoader():
         LEFT JOIN actors a ON ma.actor_id = a.id
         GROUP BY m.id
     )
-
     SELECT m.id, genre, director, title, plot, imdb_rating, x.actors_ids, x.actors_names,
-    CASE 
+    CASE
     WHEN m.writers = '' THEN '[{"id": "' || m.writer || '"}]' ELSE m.writers END AS writers
     FROM movies m
     LEFT JOIN x ON m.id = x.id

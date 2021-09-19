@@ -167,8 +167,9 @@ class PostgresSaver():
         with self.conn.cursor() as cursor:
             args = [tuple(val for val in row.values()) for row in self.person_film_work]
             args_bytes = b','.join(cursor.mogrify('(%s, %s, %s, %s, %s)', x) for x in args)
-            cursor.execute(b'INSERT INTO content.person_film_work VALUES ' + args_bytes +
-                           b' ON CONFLICT (film_work_id, person_id, role) DO NOTHING')
+            cursor.execute(b'INSERT INTO content.person_film_work VALUES '
+                           + args_bytes
+                           + b' ON CONFLICT (film_work_id, person_id, role) DO NOTHING')
 
     def save_all_data(self, data: List[dict]):
         """Basic method that processes data from MySQL and loads it into PostgreSQL."""

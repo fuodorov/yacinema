@@ -25,4 +25,3 @@ class FilmWorkViewSet(ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FilmWorkFilter
     queryset = FilmWork.objects.all()
-
