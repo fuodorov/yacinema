@@ -13,10 +13,6 @@ RUN apk update \
     && apk add postgresql-dev gcc python3-dev musl-dev
 
 RUN pip install --upgrade pip
-RUN pip install flake8==3.9.2
-COPY . .
-RUN flake8 --ignore=E501,F401,F403,W503 .
-
 COPY ./requirements/*.txt ./requirements/
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r ./requirements/prod.txt
 
@@ -32,9 +28,9 @@ RUN addgroup -S app && adduser -S app -G app
 
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
-RUN mkdir $APP_HOME
-RUN mkdir $APP_HOME/staticfiles
-RUN mkdir $APP_HOME/mediafiles
+RUN mkdir $APP_HOME \
+    && mkdir $APP_HOME/staticfiles \
+    && mkdir $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
 RUN apk update && apk add libpq

@@ -20,8 +20,8 @@ class GenreSerializer(ModelSerializer):
 
 
 class FilmWorkSerializer(ModelSerializer):
-    actors, writers, directors = ReadOnlyField(), ReadOnlyField(), ReadOnlyField()
-    genres = SlugRelatedField(many=True, read_only=True, slug_field='name')
+    genres = SlugRelatedField(slug_field='name', read_only=True, many=True)
+    writers, actors, directors = ReadOnlyField(), ReadOnlyField(), ReadOnlyField()
 
     class Meta:
         model = FilmWork
