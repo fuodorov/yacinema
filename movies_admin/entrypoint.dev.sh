@@ -11,8 +11,6 @@ then
     echo "PostgreSQL started"
 fi
 
-python utils/schema_design/schema_design.py
-
 python manage.py flush --no-input
 python manage.py makemigrations
 python manage.py migrate

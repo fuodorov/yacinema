@@ -9,21 +9,26 @@ As a second task, we suggest extending the admin panel project: run the applicat
 Uses the default Django development server.
 
 1. Rename *.env.dev-sample* to *.env.dev*.
-1. Update the environment variables in the *docker-compose.dev.yml* and *.env.dev* files.
-1. Build the images and run the containers:
+2. Update the environment variables in the *docker-compose.dev.yml* and *.env.dev* files.
+3. Build the images and run the containers:
 
     ```sh
     $ docker-compose -f docker-compose.dev.yml up --build
     ```
 
     Test it out at [http://localhost:8000](http://localhost:8000). The "movies_admin" folder is mounted into the container and your code changes apply automatically.
+4. On first run, after initialising the database to fill the database with data:
 
+   ```sh
+   $ docker exec <web container id> python utils/sqlite_to_postgres/load_data.py
+   ```
 ### Production
 
 Uses gunicorn + nginx.
 
-1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db*. Update the environment variables.
-2. Build the images and run the containers:
+1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db*. 
+2. Update the environment variables in the docker-compose.prod.yml and .env.prod files.
+3. Build the images and run the containers:
 
     ```sh
     $ docker-compose -f docker-compose.prod.yml up --build
@@ -31,11 +36,10 @@ Uses gunicorn + nginx.
 
     Test it out at [http://localhost:1337](http://localhost:1337). No mounted folders. To apply changes, the image must be re-built.
 
-3. On first run, add the following lines to the file after initialising the database to create the database schema and fill the database with data:
+4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   python utils/schema_design/schema_design.py
-   python utils/sqlite_to_postgres/load_data.py
+   $ docker exec <web container id> python utils/sqlite_to_postgres/load_data.py
    ```
 
 ## Technologies used
