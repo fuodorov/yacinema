@@ -18,6 +18,7 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./movies_admin/entrypoint-initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
     env_file:
       - ./.env.db.dev
 

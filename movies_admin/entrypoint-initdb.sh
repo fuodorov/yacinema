@@ -1,18 +1,7 @@
-import os
-import psycopg2
+#!/bin/bash
+set -e
 
-
-if __name__ == "__main__":
-
-    dsl = {
-        'dbname': os.environ.get('DB_NAME', 'movies'),
-        'user': os.environ.get('DB_USER', 'postgres'),
-        'host': os.environ.get('DB_HOST', 'localhost'),
-        'port': os.environ.get('DB_PORT', '5432'),
-        'password': os.environ.get('DB_PASSWORD', 'postgres'),
-    }
-
-    SQL = f"""
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     CREATE SCHEMA IF NOT EXISTS content;
     CREATE TABLE IF NOT EXISTS content.genre (
         id UUID PRIMARY KEY,
@@ -55,12 +44,4 @@ if __name__ == "__main__":
     );
     CREATE UNIQUE INDEX film_work_genre ON content.genre_film_work (film_work_id, genre_id);
     CREATE UNIQUE INDEX film_work_person_role ON content.person_film_work (film_work_id, person_id, role);
-    """
-
-    with psycopg2.connect(**dsl) as conn, conn.cursor() as cursor:
-        try:
-            cursor.execute(SQL)
-            print(f'Schema content is created.')
-        except psycopg2.errors.DuplicateTable:
-            print(f'Schema content already exists.')
-    conn.close()
+EOSQL

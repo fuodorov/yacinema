@@ -10,7 +10,6 @@ from typing import Any
 
 class PostgresSaver():
     """Processed data from SQLite."""
-    SCHEMA = os.getenv('DB_SCHEMA', 'content')
 
     def __init__(self, connection: _connection):
         self.conn = connection
