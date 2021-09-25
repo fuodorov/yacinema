@@ -1,5 +1,8 @@
 version: '3.9'
 
+volumes:
+  postgres_data:
+
 services:
   movies_admin:
     build:
@@ -16,8 +19,7 @@ services:
       - ./variables/.env.dev
     depends_on:
       - postgres
-
-  poatgres:
+  postgres:
     image: postgres:13.0-alpine
     container_name: postgres
     restart: always
@@ -26,6 +28,3 @@ services:
       - ./services/movies_admin/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
     env_file:
       - ./variables/.env.dev.db
-
-volumes:
-  postgres_data:
