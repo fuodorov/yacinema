@@ -1,5 +1,10 @@
 version: '3.9'
 
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
 services:
   movies_admin:
     build:
@@ -16,13 +21,14 @@ services:
     env_file:
       - ./variables/.env.prod
     depends_on:
-      - db
-  db:
+      - postgres
+  postgres:
     image: postgres:13.0-alpine
     container_name: postgres
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./services/movies_admin/entrypoint-initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
+      - ./services/movies_admin/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
     env_file:
       - ./variables/.env.prod.db
   nginx:
@@ -35,8 +41,3 @@ services:
       - 1337:80
     depends_on:
       - movies_admin
-
-volumes:
-  postgres_data:
-  static_volume:
-  media_volume:
