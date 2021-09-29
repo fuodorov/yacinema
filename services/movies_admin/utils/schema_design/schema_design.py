@@ -5,11 +5,11 @@ import psycopg2
 if __name__ == "__main__":
 
     dsl = {
-        'dbname': os.environ.get('DB_NAME', 'movies'),
-        'user': os.environ.get('DB_USER', 'postgres'),
-        'host': os.environ.get('DB_HOST', 'localhost'),
-        'port': os.environ.get('DB_PORT', '5432'),
-        'password': os.environ.get('DB_PASSWORD', 'postgres'),
+        'dbname': os.environ.get('POSTGRES_NAME', 'movies'),
+        'user': os.environ.get('POSTGRES_USER', 'postgres'),
+        'host': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'port': os.environ.get('POSTGRES_PORT', '5432'),
+        'password': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
     }
 
     SQL = f"""

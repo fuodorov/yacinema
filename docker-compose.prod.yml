@@ -11,7 +11,7 @@ services:
       context: ./services/movies_admin/
       dockerfile: Dockerfile.prod
     container_name: movies_admin
-    command: gunicorn configs.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     restart: on-failure
     volumes:
       - movies_admin_media_data:/home/app/web/mediafiles
@@ -19,7 +19,7 @@ services:
     expose:
       - 8000
     env_file:
-      - ./variables/.env.prod
+      - ./services_env/.env.prod
     depends_on:
       - postgres
   postgres:
@@ -30,7 +30,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
       - ./services/movies_admin/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
     env_file:
-      - ./variables/.env.prod.db
+      - ./services_env/.env.prod.db
   nginx:
     build: ./services/nginx
     container_name: nginx

@@ -20,7 +20,7 @@ Uses the default Django development server.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
+   $ docker exec <movies_admin container id> python postgres_to_es/sqlite_to_postgres/load_data.py
    ```
 ### Production
 
@@ -39,7 +39,7 @@ Uses gunicorn + nginx.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
+   $ docker exec <movies_admin container id> python postgres_to_es/sqlite_to_postgres/load_data.py
    ```
 
 ## Technologies used

@@ -1,10 +1,10 @@
 #!/bin/sh
 
-if [ "$DB_DATABASE" = "postgres" ]
+if [ "$POSTGRES_DATABASE" = "postgres" ]
 then
     echo "Waiting for postgres..."
 
-    while ! nc -z $DB_HOST $DB_PORT; do
+    while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
       sleep 0.1s
     done
 
