@@ -10,7 +10,7 @@ RUN apk update \
 
 RUN pip install --upgrade pip
 COPY ./requirements/*.txt ./requirements/
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r ./requirements/prod.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/postgres_to_es/app/wheels -r ./requirements/prod.txt
 
 
 FROM python:3.9.6-alpine
@@ -31,10 +31,14 @@ COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements/ .
 RUN pip install --no-cache /wheels/*
 
+COPY entrypoint.prod.sh .
+RUN sed -i "s/\r$//g"  $APP_HOME/entrypoint.prod.sh
+RUN chmod +x  $APP_HOME/entrypoint.prod.sh
+
 COPY . $APP_HOME
 
 RUN chown -R app:app $APP_HOME
 
 USER app
 
-CMD ["python", "main.py"]
+ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]

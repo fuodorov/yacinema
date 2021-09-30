@@ -21,14 +21,11 @@ services:
       - ./services_env/.env.dev.movies_admin
     depends_on:
       - postgres
-      - elasticsearch
-      - movies_etl
   movies_etl:
     build:
       context: ./services/movies_etl/
       dockerfile: Dockerfile.dev
     container_name: movies_etl
-    command: python main.py
     restart: on-failure
     volumes:
       - ./services/movies_etl/:/usr/src/app/
@@ -49,8 +46,6 @@ services:
       - elasticsearch_data:/usr/share/elasticsearch/data
     env_file:
       - ./services_env/.env.dev.elasticsearch
-    depends_on:
-      - postgres
   postgres:
     image: postgres:13.0-alpine
     container_name: postgres
