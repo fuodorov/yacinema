@@ -28,6 +28,7 @@ services:
       context: ./services/movies_etl/
       dockerfile: Dockerfile.dev
     container_name: movies_etl
+    command: python main.py
     restart: on-failure
     volumes:
       - ./services/movies_etl/:/usr/src/app/
