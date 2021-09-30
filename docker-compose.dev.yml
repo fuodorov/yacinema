@@ -1,26 +1,57 @@
 version: '3.9'
 
-services:
-  web:
-    build:
-      context: ./movies_admin/
-      dockerfile: Dockerfile.dev
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./movies_admin/:/usr/src/app/
-    ports:
-      - 8000:8000
-    env_file:
-      - ./.env.dev
-    depends_on:
-      - db
-  db:
-    image: postgres:13.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-      - ./movies_admin/entrypoint-initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
-    env_file:
-      - ./.env.db.dev
-
 volumes:
   postgres_data:
+  elasticsearch_data:
+
+services:
+  movies_admin:
+    build:
+      context: ./services/movies_admin/
+      dockerfile: Dockerfile.dev
+    container_name: movies_admin
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: on-failure
+    volumes:
+      - ./services/movies_admin/:/usr/src/app/
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./services_env/.env.dev.postgres
+      - ./services_env/.env.dev.movies_admin
+    depends_on:
+      - postgres
+  movies_etl:
+    build:
+      context: ./services/movies_etl/
+      dockerfile: Dockerfile.dev
+    container_name: movies_etl
+    restart: on-failure
+    volumes:
+      - ./services/movies_etl/:/usr/src/app/
+    env_file:
+      - ./services_env/.env.dev.postgres
+      - ./services_env/.env.dev.elasticsearch
+      - ./services_env/.env.dev.movies_etl
+    depends_on:
+      - postgres
+      - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+    container_name: elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    env_file:
+      - ./services_env/.env.dev.elasticsearch
+  postgres:
+    image: postgres:13.0-alpine
+    container_name: postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./services/movies_admin/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
+    env_file:
+      - ./services_env/.env.dev.postgres

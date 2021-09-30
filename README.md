@@ -8,7 +8,7 @@ As a second task, we suggest extending the admin panel project: run the applicat
 
 Uses the default Django development server.
 
-1. Rename *.env.dev-sample* to *.env.dev*.
+1. Rename *.env.dev-sample* to *.env.dev* in the folder *services_env/*.
 2. Update the environment variables in the *docker-compose.dev.yml* and *.env.dev* files.
 3. Build the images and run the containers:
 
@@ -16,18 +16,18 @@ Uses the default Django development server.
     $ docker-compose -f docker-compose.dev.yml up --build
     ```
 
-    Test it out at [http://localhost:8000](http://localhost:8000). The "movies_admin" folder is mounted into the container and your code changes apply automatically.
+    Test it out at [http://localhost:8000](http://localhost:8000). The "movies_admin" and "movies_etl" folder is mounted into the container and your code changes apply automatically.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <web container id> python utils/sqlite_to_postgres/load_data.py
+   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
    ```
 ### Production
 
 Uses gunicorn + nginx.
 
-1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db*. 
-2. Update the environment variables in the docker-compose.prod.yml and .env.prod files.
+1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db* in the folder *services_env/*. 
+2. Update the environment variables in the *docker-compose.prod.yml* and *.env.prod* files.
 3. Build the images and run the containers:
 
     ```sh
@@ -39,7 +39,7 @@ Uses gunicorn + nginx.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <web container id> python utils/sqlite_to_postgres/load_data.py
+   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
    ```
 
 ## Technologies used
@@ -53,6 +53,7 @@ Uses gunicorn + nginx.
 1. **Server WSGI/ASGI** - server running the application.
 2. **Nginx** - proxy server which is an entry point for web application.
 3. **PostgreSQL** - relational data storage. 
+4. **ETL** - elasticsearch.
 
 ## Project requirements
 
