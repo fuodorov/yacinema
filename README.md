@@ -8,7 +8,7 @@ As a second task, we suggest extending the admin panel project: run the applicat
 
 Uses the default Django development server.
 
-1. Rename *.env.dev-sample* to *.env.dev* in the folder *variables/*.
+1. Rename *.env.dev-sample* to *.env.dev* in the folder *services_env/*.
 2. Update the environment variables in the *docker-compose.dev.yml* and *.env.dev* files.
 3. Build the images and run the containers:
 
@@ -20,13 +20,13 @@ Uses the default Django development server.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <movies_admin container id> python postgres_to_es/sqlite_to_postgres/load_data.py
+   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
    ```
 ### Production
 
 Uses gunicorn + nginx.
 
-1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db* in the folder *variables/*. 
+1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db* in the folder *services_env/*. 
 2. Update the environment variables in the *docker-compose.prod.yml* and *.env.prod* files.
 3. Build the images and run the containers:
 
@@ -39,7 +39,7 @@ Uses gunicorn + nginx.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <movies_admin container id> python postgres_to_es/sqlite_to_postgres/load_data.py
+   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
    ```
 
 ## Technologies used
@@ -53,6 +53,7 @@ Uses gunicorn + nginx.
 1. **Server WSGI/ASGI** - server running the application.
 2. **Nginx** - proxy server which is an entry point for web application.
 3. **PostgreSQL** - relational data storage. 
+4. **ETL** - elasticsearch.
 
 ## Project requirements
 
