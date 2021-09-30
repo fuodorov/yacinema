@@ -7,12 +7,13 @@ import json
 class BaseStorage:
     @abc.abstractmethod
     def save_state(self, state: dict) -> None:
-        """Сохранить состояние в постоянное хранилище"""
+        """Save state to permanent storage."""
+        pass
 
 
     @abc.abstractmethod
     def retrieve_state(self) -> dict:
-        """Загрузить состояние локально из постоянного хранилища"""
+        """Load state locally from permanent storage."""
         pass
 
 
@@ -38,10 +39,11 @@ class JsonFileStorage(BaseStorage):
 
 
 class State:
-    """
-    Класс для хранения состояния при работе с данными, чтобы постоянно не перечитывать данные с начала.
-    Здесь представлена реализация с сохранением состояния в файл.
-    В целом ничего не мешает поменять это поведение на работу с БД или распределённым хранилищем.
+    """Class for storing state when working with data.
+
+    Class for storing state when working with data, so that you don't have to constantly re-read the data from the beginning.
+    Here is an implementation with state saving to a file.
+    In general, nothing prevents you from changing this behaviour to work with a database or distributed storage.
     """
 
     def __init__(self, storage: BaseStorage):
@@ -49,18 +51,11 @@ class State:
         self.state = storage.retrieve_state()
 
     def set_state(self, key: str, value: Any) -> None:
-        """Установить состояние для определённого ключа"""
+        """Set state for the particular key."""
         self.state[key] = value
         self.storage.save_state(self.state)
 
     def get_state(self, key: str) -> Any:
-        """Получить состояние по определённому ключу"""
+        """Get state for a particular key."""
         state_by_key = self.state.get(key, None)
         return state_by_key
-
-
-if __name__ == '__main__':
-    storage = JsonFileStorage('sandbox.json')
-    state = State(storage)
-    state.set_state('key', 'value')
-    print(state.get_state('key'))

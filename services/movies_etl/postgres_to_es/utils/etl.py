@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone, timedelta
 import json
 import time
@@ -18,6 +19,10 @@ from .queries import movies_query, genres_query, persons_query
 
 
 class ETL:
+    """ETL manager."""
+    batch_limit = int(os.environ.get('BATCH_LIMIT', 100))
+    update_interval = int(os.environ.get('UPDATE_INTERVAL', 1))
+
     def __init__(self, file_path: str, pg_conn: psycopg2.connect, es_url: str, dsl: dict):
         self.conn = pg_conn
         self.cursor = self.conn.cursor()
@@ -32,17 +37,12 @@ class ETL:
 
     @backoff.on_exception(backoff.expo, (exceptions.ConnectionError, exceptions.ConnectionTimeout))
     def clear_index_data(self, index_name: str):
-        """
-        очищает все данные внутри индекса. Это нужно, потому что при запуске всей системы индексы
-        в postgres генерируются заново, и использовать существующие записи в es не удастся
-        """
+        """Clears all data within the index."""
         self.es.indices.delete(index=index_name, ignore=404)
         self.es.indices.create(index=index_name)
 
     def initial_update(self):
-        """
-        заносит все записи из Postgres в ES и устанавливает время обновления
-        """
+        """Puts all entries from Postgres into Elasticsearch and sets the update time."""
         logging.warning('Wait while all data will be loaded to ES...')
         self.clear_index_data('movies')
         self.clear_index_data('genres')
@@ -52,15 +52,13 @@ class ETL:
         self.initial_load_from_psql(transform)
         updater.close()
         transform.close()
-        cur_time = (datetime.now(timezone.utc)).strftime("%m-%d-%Y %H:%M:%S")
+        current_time = (datetime.now(timezone.utc)).strftime("%m-%d-%Y %H:%M:%S")
         for table_name in self.main_tables:
-            self.postgresState.set_state(table_name, cur_time)
+            self.postgresState.set_state(table_name, current_time)
         logging.warning('Now ES is up-to-date with postgres')
 
     def initial_load_from_psql(self, target: Callable):
-        """
-        выгружает все записи из Postgres пачками и отправляет обработчику
-        """
+        """Loads all entries from Postgres in packs and sends to the handler."""
         @backoff.on_exception(backoff.expo, psycopg2.Error)
         def load(self, target):
             queries = [{'index': 'genres', 'query': genres_query},
@@ -71,43 +69,37 @@ class ETL:
                 while True:
                     q = query['query'](offset)
                     self.cursor.execute(q)
-                    offset += 100
+                    offset += self.batch_limit
                     all_rows = [dict(row) for row in self.cursor]
                     target.send({'index': query['index'], 'data': all_rows})
-                    if len(all_rows) < 100:
+                    if len(all_rows) < self.batch_limit:
                         break
         load(self, target)
 
     @backoff.on_exception(backoff.expo, (exceptions.ConnectionError, exceptions.ConnectionTimeout))
     def update_es_instances(self, index: str, data: list):
-        """
-        Обновляет пачку записей в индексе в es
-        """
+        """Updates a bunch of entries in the index in Elasticsearch."""
         logging.warning(f"""Updating {index} in ES""")
         doc_data = [{
-            "_op_type": 'update',
-            "_type": "_doc",
-            "_index": index,
-            "_id": instance.id,
-            "doc": instance.dict(),
-            "doc_as_upsert": True
+            '_op_type': 'update',
+            '_type': '_doc',
+            '_index': index,
+            '_id': instance.id,
+            'doc': instance.dict(),
+            'doc_as_upsert': True
         } for instance in data]
         helpers.bulk(self.es, doc_data)
 
     @coroutine
     def update_es(self):
-        """
-        обновляет записи в ES или добавляет, если их нет
-        """
+        """Updates entries in the Elasticsearch or adds if there are none."""
         while True:
             instances_to_update = (yield)
             self.update_es_instances(instances_to_update['index'], instances_to_update['data'])
 
     @coroutine
     def transform_received(self, target: Callable):
-        """
-        приводит записи из Postgres к пригодной для ES структуре
-        """
+        """Brings Postgres entries to an Elasticsearch-appropriate structure."""
         roles_correlation = {'director': 'directors', 'actor': 'actors', 'writer': 'writers'}
         while True:
             rows = (yield)
@@ -158,16 +150,16 @@ class ETL:
 
     @coroutine
     def get_associated_instances(self, target: Callable):
-        """
-        делает JOIN остальных таблиц, связанных с данной записью
-        """
-        references = [{'table_name': 'content.person', 'join_table_name': 'content.person_film_work', 'field': 'person_id'},
-                       {'table_name': 'content.genre', 'join_table_name': 'content.genre_film_work', 'field': 'genre_id'},
-                       {'table_name': 'content.film_work', 'join_table_name': None, 'field': None}]
+        """Makes a JOIN of the other tables linked to the entry."""
+        references = [
+            {'table_name': 'content.person', 'join_table_name': 'content.person_film_work', 'field': 'person_id'},
+            {'table_name': 'content.genre', 'join_table_name': 'content.genre_film_work', 'field': 'genre_id'},
+            {'table_name': 'content.film_work', 'join_table_name': None, 'field': None}
+        ]
 
         @backoff.on_exception(backoff.expo, psycopg2.Error, on_backoff=self.postgres_backoff_handler)
         def join_all_fw_tables(self, fw_ids: list, target: Callable):
-            # поиск всех связанных записей из других таблиц
+            # search for all related entries from other tables
             self.cursor.execute(f"""SELECT
                                         fw.id as fw_id, 
                                         fw.title, 
@@ -205,8 +197,7 @@ class ETL:
                 target.send({'index': 'genres', 'data': all_rows})
             elif table_name == 'content.person':
                 self.cursor.execute(f"""SELECT
-                                                p.first_name,
-                                                p.last_name,
+                                                p.full_name,
                                                 p.id as p_id,
                                                 fw.id as fw_id,
                                                 pfw.role as person_role
@@ -219,9 +210,7 @@ class ETL:
 
         @backoff.on_exception(backoff.expo, psycopg2.Error, on_backoff=self.postgres_backoff_handler())
         def get_associated_movies(self, reference: dict, ids: list):
-            """
-            поиск всех фильмов, связанных с данной записью
-            """
+            """Search for all films related to this entry."""
             sql_query = f"""SELECT 
                                 fw.id, 
                                 fw.modified
@@ -229,7 +218,7 @@ class ETL:
                             LEFT JOIN {reference['join_table_name']} pfw ON pfw.film_work_id = fw.id
                             WHERE pfw.{reference['field']} IN {ids}
                             ORDER BY fw.modified DESC
-                            LIMIT 100;"""
+                            LIMIT {self.batch_limit};"""
             self.cursor.execute(sql_query)
             dict_cur = (dict(row) for row in self.cursor)
             fw_ids = tuple([item['id'] for item in dict_cur])
@@ -262,9 +251,7 @@ class ETL:
         self.cursor = self.conn.cursor()
 
     def get_last_table_updates(self, table_name: str, target: Callable):
-        """
-        поиск последних изменений в этой таблице
-        """
+        """Search for recent changes to this table."""
         try:
             update_time_str = self.postgresState.state[table_name]
             update_time = datetime.strptime(update_time_str, "%m-%d-%Y %H:%M:%S")
@@ -274,11 +261,11 @@ class ETL:
                                     FROM {table_name}
                                     WHERE modified > '{update_time}'
                                     ORDER BY modified DESC
-                                    LIMIT 100;""")
+                                    LIMIT {self.batch_limit};""")
             dict_cur = (dict(row) for row in self.cursor)
         except psycopg2.Error as e:
             print(e)
-            logging.warning("Waiting for Postgres to wake up...")
+            logging.warning('Waiting for Postgres to wake up...')
             try:
                 self.reconnect_postgres()
             except psycopg2.Error as e:
@@ -299,22 +286,15 @@ class ETL:
             target.send(info_to_send)
 
     def get_updated_instances(self, target: Callable):
-        """
-        Поиск записей, измененных после последнего обновления состояния
-        """
+        """Search for entries that have changed since the last status update."""
         while True:
             for table_name in self.main_tables:
                 self.get_last_table_updates(table_name, target)
-            time.sleep(2)
+            time.sleep(self.update_interval)
 
     def start_merge(self):
-        """
-        запуск бесконечного цикла обновления данных из Postgres в ES
-        """
+        """Running an endless data update cycle from Postgres to ES."""
         updater = self.update_es()
         transform = self.transform_received(updater)
         associated_loader = self.get_associated_instances(transform)
         self.get_updated_instances(associated_loader)
-
-
-

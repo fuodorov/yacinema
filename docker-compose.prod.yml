@@ -2,6 +2,7 @@ version: '3.9'
 
 volumes:
   postgres_data:
+  elasticsearch_data:
   movies_admin_media_data:
   movies_admin_static_data:
 
@@ -19,9 +20,33 @@ services:
     expose:
       - 8000
     env_file:
-      - ./services_env/.env.prod
+      - ./services_env/.env.prod.postgres
+      - ./services_env/.env.prod.movies_admin
     depends_on:
       - postgres
+  movies_etl:
+    build:
+      context: ./services/movies_etl/
+      dockerfile: Dockerfile.prod
+    container_name: movies_etl
+    restart: on-failure
+    env_file:
+      - ./services_env/.env.prod.postgres
+      - ./services_env/.env.prod.elasticsearch
+      - ./services_env/.env.prod.movies_etl
+    depends_on:
+      - postgres
+      - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+    container_name: elasticsearch
+    restart: always
+    expose:
+      - 9200
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    env_file:
+      - ./services_env/.env.prod.elasticsearch
   postgres:
     image: postgres:13.0-alpine
     container_name: postgres
@@ -30,7 +55,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
       - ./services/movies_admin/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
     env_file:
-      - ./services_env/.env.prod.db
+      - ./services_env/.env.prod.postgres
   nginx:
     build: ./services/nginx
     container_name: nginx
@@ -38,6 +63,6 @@ services:
       - movies_admin_media_data:/home/app/web/mediafiles
       - movies_admin_static_data:/home/app/web/staticfiles
     ports:
-      - 1337:80
+      - "1337:80"
     depends_on:
       - movies_admin

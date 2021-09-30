@@ -9,7 +9,7 @@ done
 echo "PostgreSQL started"
 
 while ! nc -z "$ELASTICSEARCH_HOST" "$ELASTICSEARCH_PORT"; do
-  sleep 0.1
+  sleep 0.1s
 done
 
 echo "Elasticsearch started"

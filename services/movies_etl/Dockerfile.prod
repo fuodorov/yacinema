@@ -10,7 +10,7 @@ RUN apk update \
 
 RUN pip install --upgrade pip
 COPY ./requirements/*.txt ./requirements/
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/postgres_to_es/app/wheels -r ./requirements/prod.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r ./requirements/prod.txt
 
 
 FROM python:3.9.6-alpine
