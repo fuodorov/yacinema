@@ -25,7 +25,11 @@ class JsonFileStorage(BaseStorage):
             with open(self.file_path) as f:
                 state = json.load(f)
         except FileNotFoundError:
-            state = {"person": "01-01-1970 00:00:00", "genre": "01-01-1970 00:00:00", "film_work": "01-01-1970 00:00:00"}
+            state = {
+                "content.person": "01-01-1970 00:00:00",
+                "content.genre": "01-01-1970 00:00:00",
+                "content.film_work": "01-01-1970 00:00:00"
+            }
         return state
 
     def save_state(self, state: dict) -> None:
