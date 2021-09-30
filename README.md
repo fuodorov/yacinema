@@ -16,7 +16,7 @@ Uses the default Django development server.
     $ docker-compose -f docker-compose.dev.yml up --build
     ```
 
-    Test it out at [http://localhost:8000](http://localhost:8000). The "movies_admin" folder is mounted into the container and your code changes apply automatically.
+    Test it out at [http://localhost:8000](http://localhost:8000). The "movies_admin" and "movies_etl" folder is mounted into the container and your code changes apply automatically.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
