@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
 
@@ -6,5 +6,5 @@ from pydantic import BaseModel, Field
 class Person(BaseModel):
     full_name: str
     id: str
-    role: Optional[list[str]] = Field(default_factory=list)
-    film_ids: Optional[list[str]] = Field(default_factory=list)
+    role: List[str] = Field(default_factory=list)
+    film_ids: List[str] = Field(default_factory=list)

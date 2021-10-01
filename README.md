@@ -8,30 +8,30 @@ As a second task, we suggest extending the admin panel project: run the applicat
 
 Uses the default Django development server.
 
-1. Rename *.env.dev-sample* to *.env.dev* in the folder *services_env/*.
-2. Update the environment variables in the *docker-compose.dev.yml* and *.env.dev* files.
+1. Rename *.env.dev.example* to *.env.dev*.
+2. Update the environment variables in the *.env.dev* file.
 3. Build the images and run the containers:
 
     ```sh
-    $ docker-compose -f docker-compose.dev.yml up --build
+    $ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
     ```
 
     Test it out at [http://localhost:8000](http://localhost:8000). The "movies_admin" and "movies_etl" folder is mounted into the container and your code changes apply automatically.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
+   $ docker exec movies_admin python utils/sqlite_to_postgres/load_data.py
    ```
 ### Production
 
 Uses gunicorn + nginx.
 
-1. Rename *.env.prod-sample* to *.env.prod* and *.env.prod.db-sample* to *.env.prod.db* in the folder *services_env/*. 
-2. Update the environment variables in the *docker-compose.prod.yml* and *.env.prod* files.
+1. Rename *.env.prod.example* to *.env.prod*. 
+2. Update the environment variables in the *.env.prod* file.
 3. Build the images and run the containers:
 
     ```sh
-    $ docker-compose -f docker-compose.prod.yml up --build
+    $ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
     ```
 
     Test it out at [http://localhost:1337](http://localhost:1337). No mounted folders. To apply changes, the image must be re-built.
@@ -39,7 +39,7 @@ Uses gunicorn + nginx.
 4. On first run, after initialising the database to fill the database with data:
 
    ```sh
-   $ docker exec <movies_admin container id> python utils/sqlite_to_postgres/load_data.py
+   $ docker exec movies_admin python utils/sqlite_to_postgres/load_data.py
    ```
 
 ## Technologies used

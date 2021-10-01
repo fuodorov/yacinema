@@ -34,6 +34,9 @@ class JsonFileStorage(BaseStorage):
         return state
 
     def save_state(self, state: dict) -> None:
+        if self.file_path is None:
+            return None
+
         with open(self.file_path, 'w') as f:
             json.dump(state, f)
 

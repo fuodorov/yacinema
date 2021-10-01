@@ -19,3 +19,5 @@ RUN chmod +x /usr/src/app/entrypoint.dev.sh
 COPY . .
 
 ENTRYPOINT ["/usr/src/app/entrypoint.dev.sh"]
+
+CMD ["python", "postgres_to_es/main.py"]

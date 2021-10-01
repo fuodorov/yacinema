@@ -14,6 +14,4 @@ done
 
 echo "Elasticsearch started"
 
-python postgres_to_es/main.py
-
 exec "$@"
