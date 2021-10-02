@@ -1,21 +1,41 @@
+import logging
 import os
 
-from psycopg2.extras import DictCursor
-import psycopg2
+from elastic import ElasticsearchLoader
+from postgres import PostgresProducer
+from models import ModeETL
+from state import JsonFileStorage, State
+from pipelines import FilmWorkPipeline, PersonPipeline, GenrePipeline
 
-from utils.etl import ETL
+ETL_MODE = os.environ.get('ETL_MODE')
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s: %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('root')
+
+# Вдохновленный вебинаром и работами других участников...
 if __name__ == '__main__':
-    dsl = {
-        'dbname': os.environ['POSTGRES_DB'],
-        'user': os.environ['POSTGRES_USER'],
-        'password': os.environ['POSTGRES_PASSWORD'],
-        'host': os.environ['POSTGRES_HOST'],
-        'port': os.environ['POSTGRES_PORT']
-    }
-    es_host = os.environ['ELASTICSEARCH_HOST']
-    es_port = os.environ['ELASTICSEARCH_PORT']
-    with psycopg2.connect(**dsl, cursor_factory=DictCursor) as pg_conn:
-        mergePipe = ETL(file_path='state.json', pg_conn=pg_conn, es_url=f"http://{es_host}:{es_port}/", dsl=dsl)
-        mergePipe.initial_update()
-        mergePipe.start_merge()
+    logger.info(f'Start ETL application with {ETL_MODE} mode')
+
+    state = State(
+        JsonFileStorage(os.environ.get('ETL_FILE_STATE'))
+    )
+    es_loader = ElasticsearchLoader(
+        [f"http://{os.environ.get('ELASTICSEARCH_HOST')}:{os.environ.get('ELASTICSEARCH_PORT')}"]
+    )
+    db_adapter = PostgresProducer({
+        'dbname': os.environ.get('POSTGRES_NAME'),
+        'user': os.environ.get('POSTGRES_USER'),
+        'password': os.environ.get('POSTGRES_PASSWORD'),
+        'host': os.environ.get('POSTGRES_HOST'),
+        'port': os.environ.get('POSTGRES_PORT'),
+    })
+
+    if ETL_MODE == ModeETL.FILM_WORK.value:
+        film_work = FilmWorkPipeline(state, db_adapter, es_loader)
+        film_work.etl_process()
+    elif ETL_MODE == ModeETL.PERSON.value:
+        person = PersonPipeline(state, db_adapter, es_loader)
+        person.etl_process()
+    elif ETL_MODE == ModeETL.GENRE.value:
+        genre = GenrePipeline(state, db_adapter, es_loader)
+        genre.etl_process()

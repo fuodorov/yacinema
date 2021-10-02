@@ -9,7 +9,21 @@ services:
       - "8000:8000"
     env_file:
       - ./.env.dev
-  movies_etl:
+  movies_film_etl:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/movies_etl/:/usr/src/app/
+    env_file:
+      - ./.env.dev
+  movies_person_etl:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/movies_etl/:/usr/src/app/
+    env_file:
+      - ./.env.dev
+  movies_genre_etl:
     build:
       dockerfile: Dockerfile.dev
     volumes:

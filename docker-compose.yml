@@ -12,11 +12,33 @@ services:
     restart: on-failure
     depends_on:
       - postgres
-  movies_etl:
+  movies_film_etl:
     build:
       context: ./services/movies_etl/
-    container_name: movies_etl
+    container_name: movies_film_etl
     restart: on-failure
+    environment:
+      - ETL_MODE=film_work
+    depends_on:
+      - postgres
+      - elasticsearch
+  movies_person_etl:
+    build:
+      context: ./services/movies_etl/
+    container_name: movies_person_etl
+    restart: on-failure
+    environment:
+      - ETL_MODE=person
+    depends_on:
+      - postgres
+      - elasticsearch
+  movies_genre_etl:
+    build:
+      context: ./services/movies_etl/
+    container_name: movies_genre_etl
+    restart: on-failure
+    environment:
+      - ETL_MODE=genre
     depends_on:
       - postgres
       - elasticsearch
