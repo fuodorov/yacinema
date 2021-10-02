@@ -17,23 +17,32 @@ from models.person import Person
 from .coroutine import coroutine
 from .queries import movies_query, genres_query, persons_query
 
+logging.basicConfig(level=logging.WARNING)
+logging.getLogger('backoff').addHandler(logging.StreamHandler())
+
 
 class ETL:
     """ETL manager."""
+    # ToDo:
+    #  - с точки зрения ETL - желательно все-таки разбить этот класс на 3,
+    #  соответствующие каждому этапу и сделать их минимально связными.
+    #  Чтобы каждый компонент просто работал с полученной порцией данных.
+    #  Меньшая связность компонентов - залог их простого расширения
+    #  - Я долго думал, разбивать или нет... Решил, что не нужно
+    #  ETL = PostgresProducer + ElasticsearchLoader + Pipeline
+    #  Чуть не успеваю до дедлайна, выкладываю то, что есть :-/
+
     batch_limit = int(os.environ.get('BATCH_LIMIT', 100))
     update_interval = int(os.environ.get('UPDATE_INTERVAL', 1))
+    main_tables = ('content.person', 'content.genre', 'content.film_work')
+    associated_tables = ('content.genre_film_work', 'content.person_film_work')
 
     def __init__(self, file_path: str, pg_conn: psycopg2.connect, es_url: str, dsl: dict):
         self.conn = pg_conn
         self.cursor = self.conn.cursor()
-        self.dsl = dsl
-        self.main_tables = ('content.person', 'content.genre', 'content.film_work')
-        self.associated_tables = ('content.genre_film_work', 'content.person_film_work')
-        self.storage = JsonFileStorage(file_path)
-        self.postgresState = State(self.storage)
         self.es = Elasticsearch(es_url)
-        logging.basicConfig(level=logging.WARNING)
-        logging.getLogger('backoff').addHandler(logging.StreamHandler())
+        self.dsl = dsl
+        self.postgresState = State(JsonFileStorage(file_path))
 
     @backoff.on_exception(backoff.expo, (exceptions.ConnectionError, exceptions.ConnectionTimeout))
     def clear_index_data(self, index_name: str):
@@ -43,6 +52,11 @@ class ETL:
 
     def initial_update(self):
         """Puts all entries from Postgres into Elasticsearch and sets the update time."""
+        # ToDo:
+        #  - это не очень хороший подход) зачем нам удалять индекс, если только для дебага..
+        #  но тут у нас продакш код. можем проверять есть ли индекс и создавать, если нет.
+        #  - У нас же при запуске кинотеатра индексы в Postgres генерируются заново,
+        #  и использовать существующие записи в es не удастся?
         logging.warning('Wait while all data will be loaded to ES...')
         self.clear_index_data('movies')
         self.clear_index_data('genres')
@@ -96,6 +110,9 @@ class ETL:
         while True:
             instances_to_update = (yield)
             self.update_es_instances(instances_to_update['index'], instances_to_update['data'])
+
+    def movies_transform_received(self):
+        pass
 
     @coroutine
     def transform_received(self, target: Callable):
@@ -254,7 +271,8 @@ class ETL:
         """Search for recent changes to this table."""
         try:
             update_time_str = self.postgresState.state[table_name]
-            update_time = datetime.strptime(update_time_str, "%m-%d-%Y %H:%M:%S")
+            update_time = datetime.strptime(update_time_str if update_time_str else "01-01-1970 00:00:00",
+                                            "%m-%d-%Y %H:%M:%S")
             self.cursor.execute(f"""SELECT 
                                         id, 
                                         modified
@@ -264,8 +282,7 @@ class ETL:
                                     LIMIT {self.batch_limit};""")
             dict_cur = (dict(row) for row in self.cursor)
         except psycopg2.Error as e:
-            print(e)
-            logging.warning('Waiting for Postgres to wake up...')
+            logging.warning(f'{e}. Waiting for Postgres to wake up...')
             try:
                 self.reconnect_postgres()
             except psycopg2.Error as e:
