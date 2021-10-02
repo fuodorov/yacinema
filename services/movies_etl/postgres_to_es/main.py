@@ -12,7 +12,7 @@ ETL_MODE = os.environ.get('ETL_MODE')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s: %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('root')
 
-# Вдохновленный вебинаром и работами других участников...
+# Вдохновленный вебинаром...
 if __name__ == '__main__':
     logger.info(f'Start ETL application with {ETL_MODE} mode')
 
