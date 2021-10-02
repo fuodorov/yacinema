@@ -83,13 +83,11 @@ class BasePipeline:
     def event_loop(self, generators: List[Generator]):
         while True:
             state_value = self.state.get_state(self.state_key) or '2021-01-01 00:00:00'
-            self.db_adapter.init()
             self.logger.info(f'Start ETL process for {self.state_key}: {state_value}')
             for generator in generators:
                 generator.send(state_value)
             self.state.set_state(self.state_key, str(dt.datetime.now()))
             self.logger.info(f'ETL process is finished.  Sleep: {ETL_SYNC_DELAY} seconds')
-            self.db_adapter.close()
             sleep(ETL_SYNC_DELAY)
 
 

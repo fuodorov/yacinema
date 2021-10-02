@@ -15,6 +15,7 @@ class PostgresProducer:
         self.chunk_size = chunk_size
         self._connection = None
         self._cursor = None
+        self.init()
 
     def cursor(self) -> None:
         if not self._cursor or self._cursor.closed:
