@@ -1,7 +1,5 @@
-from django_filters import CharFilter, DateTimeFromToRangeFilter
-from django_filters import FilterSet
-
-from movies.models import Person, Genre, FilmWork
+from django_filters import CharFilter, DateTimeFromToRangeFilter, FilterSet
+from movies.models import FilmWork, Genre, Person
 
 
 class PersonFilter(FilterSet):

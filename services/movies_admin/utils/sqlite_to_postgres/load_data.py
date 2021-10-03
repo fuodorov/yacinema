@@ -1,10 +1,9 @@
 import os
 import sqlite3
-import psycopg2
-
 from pathlib import Path
-from psycopg2.extensions import connection as _connection
 
+import psycopg2
+from psycopg2.extensions import connection as _connection
 from utils.loader import SQLiteLoader
 from utils.saver import PostgresSaver
 

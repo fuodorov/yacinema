@@ -1,8 +1,9 @@
 import uuid
 
+from django.core.validators import MaxValueValidator as Max
+from django.core.validators import MinValueValidator as Min
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator as Min, MaxValueValidator as Max
 from model_utils.models import TimeStampedModel
 
 

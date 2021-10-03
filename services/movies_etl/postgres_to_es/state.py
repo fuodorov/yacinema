@@ -1,7 +1,6 @@
 import abc
 import json
 import logging
-
 from typing import Any, Optional
 
 module_logger = logging.getLogger('JsonFileStorage')
@@ -50,7 +49,7 @@ class State:
     def set_state(self, key: str, value: Any) -> None:
         self.state[key] = value
         self.storage.save_state(self.state)
-        module_logger.info(f'Set key {key} with value {value} to storage')
+        module_logger.info('Set key %s with value %s to storage', key, value)
 
     def get_state(self, key: str) -> Any:
         return self.state.get(key)

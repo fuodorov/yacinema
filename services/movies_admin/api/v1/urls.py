@@ -1,6 +1,5 @@
+from movies.api.v1.views import FilmWorkViewSet, GenreViewSet, PersonViewSet
 from rest_framework import routers
-
-from movies.api.v1.views import PersonViewSet, GenreViewSet, FilmWorkViewSet
 
 router_v1 = routers.DefaultRouter()
 router_v1.register('persons', PersonViewSet, basename='persons')

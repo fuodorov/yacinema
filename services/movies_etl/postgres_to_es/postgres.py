@@ -1,21 +1,20 @@
 import logging
-import psycopg2
-
 from typing import Generator, List, Union
-from psycopg2.extras import DictCursor, DictRow
 
+import psycopg2
+from config import ETL_CHUNK_SIZE
+from psycopg2.extras import DictCursor, DictRow
 from utils import backoff
 
 module_logger = logging.getLogger('PostgresProducer')
 
 
 class PostgresProducer:
-    def __init__(self, dsn: dict, chunk_size: int = 500):
+    def __init__(self, dsn: dict, chunk_size: int = ETL_CHUNK_SIZE):
         self.dsn = dsn
         self.chunk_size = chunk_size
         self._connection = None
         self._cursor = None
-        self.init()
 
     def cursor(self) -> None:
         if not self._cursor or self._cursor.closed:

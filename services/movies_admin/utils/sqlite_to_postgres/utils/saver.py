@@ -1,11 +1,9 @@
 import os
+from datetime import datetime
+from typing import Any, Dict, List, Set
+from uuid import uuid4
 
 from psycopg2.extensions import connection as _connection
-from uuid import uuid4
-from datetime import datetime
-
-from typing import List, Dict, Set
-from typing import Any
 
 
 class PostgresSaver():
