@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Generator, List
 
-from config import ETL_CHUNK_SIZE
+import config
 from elasticsearch import Elasticsearch, exceptions
 from utils import backoff
 
@@ -11,7 +11,7 @@ module_logger = logging.getLogger('ElasticsearchLoader')
 
 
 class ElasticsearchLoader:
-    def __init__(self, hosts: list, chunk_size: int = ETL_CHUNK_SIZE):
+    def __init__(self, hosts: list, chunk_size: int = config.ETL_CHUNK_SIZE):
         self.client = Elasticsearch(hosts=hosts)
         self.chunk_size = chunk_size
 

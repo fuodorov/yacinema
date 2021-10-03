@@ -6,7 +6,7 @@ from typing import Any, Optional
 module_logger = logging.getLogger('JsonFileStorage')
 
 
-class BaseStorage:
+class BaseStorage(abc.ABC):
     @abc.abstractmethod
     def save_state(self, state: dict) -> None:
         pass

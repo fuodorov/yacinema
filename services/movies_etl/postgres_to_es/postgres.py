@@ -1,8 +1,8 @@
 import logging
 from typing import Generator, List, Union
 
+import config
 import psycopg2
-from config import ETL_CHUNK_SIZE
 from psycopg2.extras import DictCursor, DictRow
 from utils import backoff
 
@@ -10,7 +10,7 @@ module_logger = logging.getLogger('PostgresProducer')
 
 
 class PostgresProducer:
-    def __init__(self, dsn: dict, chunk_size: int = ETL_CHUNK_SIZE):
+    def __init__(self, dsn: dict, chunk_size: int = config.ETL_CHUNK_SIZE):
         self.dsn = dsn
         self.chunk_size = chunk_size
         self._connection = None
