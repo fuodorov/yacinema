@@ -70,6 +70,7 @@ class BasePipeline:
             self.logger.info('Start ETL process for %s: %s', self.state_key, state_value)
             for generator in generators:
                 generator.send(state_value)
+            # ToDo: state лучше фиксировать по последней modified обработанной записи
             self.state.set_state(self.state_key, str(dt.datetime.now()))
             self.logger.info('ETL process is finished.  Sleep: %d seconds', ETL_SYNC_DELAY)
             sleep(ETL_SYNC_DELAY)

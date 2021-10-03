@@ -15,15 +15,15 @@ class ElasticsearchLoader:
         self.client = Elasticsearch(hosts=hosts)
         self.chunk_size = chunk_size
 
-    def init(self, index: str):
+    def init(self, index_name: str):
         index_dir = Path(__file__).resolve(strict=True).parent.joinpath('indexes')
-        file = index_dir.joinpath(f'{index}.json')
+        file = index_dir.joinpath(f'{index_name}.json')
         with open(file, 'r') as index_file:
             data = json.load(index_file)
         try:
-            self.client.indices.create(index=index, body=data)
+            self.client.indices.create(index=index_name, body=data)
         except exceptions.ElasticsearchException:
-            module_logger.warning('Index already exist: %s', index)
+            module_logger.warning('Index already exist: %s', index_name)
 
     def load_to_es(self, records: List[dict], index_name: str) -> None:
         for prepared_query in self._get_chunk_query(records, index_name):
