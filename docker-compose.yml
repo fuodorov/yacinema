@@ -48,6 +48,10 @@ services:
     restart: always
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+    environment:
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - discovery.type=single-node
+      - logger.level=ERROR
   postgres:
     image: postgres:13.0-alpine
     container_name: postgres
