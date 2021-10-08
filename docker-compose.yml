@@ -1,6 +1,7 @@
 version: '3.9'
 
 volumes:
+  redis_data:
   postgres_data:
   elasticsearch_data:
 
@@ -42,6 +43,14 @@ services:
     depends_on:
       - postgres
       - elasticsearch
+  movies_async_api:
+    build:
+      context: ./services/movies_async_api
+    container_name: movies_async_api
+    restart: on-failure
+    depends_on:
+      - postgres
+      - elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
     container_name: elasticsearch
@@ -59,3 +68,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - ./services/movies_admin/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    volumes:
+      - redis_data:/data
