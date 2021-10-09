@@ -60,3 +60,4 @@ services:
       - "1337:80"
     depends_on:
       - movies_admin
+      - movies_async_api
