@@ -45,6 +45,11 @@ services:
   postgres:
     env_file:
       - ./.env.prod
+  redis:
+    expose:
+      - 6379
+    env_file:
+      - ./.env.prod
   nginx:
     build: ./services/nginx
     container_name: nginx

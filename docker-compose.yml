@@ -49,6 +49,7 @@ services:
     container_name: movies_async_api
     restart: on-failure
     depends_on:
+      - redis
       - postgres
       - elasticsearch
   elasticsearch:
