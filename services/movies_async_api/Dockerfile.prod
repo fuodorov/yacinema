@@ -24,3 +24,5 @@ COPY --from=builder /usr/src/app/requirements/ .
 RUN pip install --no-cache /wheels/*
 
 COPY ./src $APP_HOME
+
+CMD ["python", "main.py"]

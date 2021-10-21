@@ -33,9 +33,6 @@ services:
   movies_async_api:
     build:
       dockerfile: Dockerfile.dev
-    command: python src/main.py
-    volumes:
-      - ./services/movies_async_api/:/usr/src/app/
     ports:
       - "8000:8000"
     env_file:

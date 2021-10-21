@@ -30,9 +30,9 @@ services:
     env_file:
       - ./.env.prod
   movies_async_api:
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
     build:
       dockerfile: Dockerfile.prod
+    command: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000
     expose:
       - 8000
     env_file:
