@@ -54,7 +54,7 @@ Uses gunicorn + nginx.
 2. **Nginx** - proxy server which is an entry point for web application.
 3. **PostgreSQL** - relational data storage. 
 4. **ETL** - elasticsearch.
-5. **Async API** - FastAPI.
+5. **Async API** - fastAPI.
 
 ## Project requirements
 
