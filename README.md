@@ -60,7 +60,8 @@ Uses gunicorn + uvicorn + nginx.
 2. **Nginx** - proxy server which is an entry point for web application.
 3. **PostgreSQL** - relational data storage. 
 4. **ETL** - elasticsearch.
-5. **Tests** - pytest.
+5. **Async API** - fastAPI.
+6. **Tests Async API** - Pytest.
 
 ## Project requirements
 
