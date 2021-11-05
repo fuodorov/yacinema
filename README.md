@@ -22,9 +22,15 @@ Uses the default Django development server.
    ```sh
    $ docker exec movies_admin python utils/sqlite_to_postgres/load_data.py
    ```
+5. Run tests for movies async api:
+
+   ```sh
+   $ cd services/movies_async_api/tests/functional/
+   $ docker-compose up --build 
+   ```
 ### Production
 
-Uses gunicorn + nginx.
+Uses gunicorn + uvicorn + nginx.
 
 1. Rename *.env.prod.example* to *.env.prod*. 
 2. Update the environment variables in the *.env.prod* file.
@@ -54,6 +60,7 @@ Uses gunicorn + nginx.
 2. **Nginx** - proxy server which is an entry point for web application.
 3. **PostgreSQL** - relational data storage. 
 4. **ETL** - elasticsearch.
+5. **Tests** - pytest.
 
 ## Project requirements
 

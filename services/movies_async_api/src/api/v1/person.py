@@ -25,21 +25,32 @@ async def get_persons(params: QueryParamsBase, person_service: PersonService) ->
     return [Person(**person.dict()) for person in persons]
 
 
-@router.get('/', response_model=List[BasePerson])
+@router.get('/',
+            response_model=List[BasePerson],
+            description='Info about persons with pagination, filtering by film and sorting by full name',
+            response_description='Persons list with base info')
 async def persons_info(params: PersonQueryParamsInfo = Depends(),
-                     person_service: PersonService = Depends(get_person_service)) -> List[BasePerson]:
-    persons = await get_persons(params, person_service)
-    return persons
-
-
-@router.get('/search', response_model=List[BasePerson])
-async def persons_search(params: PersonQueryParamsSearch = Depends(),
                        person_service: PersonService = Depends(get_person_service)) -> List[BasePerson]:
     persons = await get_persons(params, person_service)
     return persons
 
 
-@router.get('/{person_id}', response_model=Person)
+@router.get('/search',
+            response_model=List[BasePerson],
+            description='''Persons full-text search with pagination, filtering by film and sorting by full name 
+                        and relevance''',
+            response_description='Persons list with base info'
+            )
+async def persons_search(params: PersonQueryParamsSearch = Depends(),
+                         person_service: PersonService = Depends(get_person_service)) -> List[BasePerson]:
+    persons = await get_persons(params, person_service)
+    return persons
+
+
+@router.get('/{person_id}',
+            response_model=Person,
+            description='Detailed info about person including its roles and films',
+            response_description='Person details')
 async def person_details(person_id: UUID, person_service: PersonService = Depends(get_person_service)) -> Person:
     module_logger.info('Getting person with id (%s)', person_id)
     person = await person_service.get_by_id(str(person_id))

@@ -11,8 +11,11 @@ from core import config
 from core.logger import LOGGING
 from db import elastic, redis
 
-app = FastAPI(title=config.PROJECT_NAME, docs_url='/api/openapi',
-              openapi_url='/api/openapi.json', default_response_class=ORJSONResponse)
+app = FastAPI(title=config.PROJECT_NAME,
+              description='Info about movies, genres and corresponding persons (e.g. actors, directors and writers)',
+              docs_url='/api/openapi',
+              openapi_url='/api/openapi.json',
+              default_response_class=ORJSONResponse)
 
 
 @app.on_event('startup')

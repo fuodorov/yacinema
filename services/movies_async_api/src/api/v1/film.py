@@ -25,21 +25,31 @@ async def get_films(params: QueryParamsBase, film_service: FilmService) -> List[
     return [Film(**film.dict()) for film in films]
 
 
-@router.get('/', response_model=List[BaseFilm])
+@router.get('/',
+            response_model=List[BaseFilm],
+            description='Info about films with pagination, filtering by genre and sorting by rating and title',
+            response_description='Films list with base info')
 async def films_info(params: FilmQueryParamsInfo = Depends(),
                      film_service: FilmService = Depends(get_film_service)) -> List[BaseFilm]:
     films = await get_films(params, film_service)
     return films
 
 
-@router.get('/search', response_model=List[BaseFilm])
+@router.get('/search',
+            response_model=List[BaseFilm],
+            description='''Films full-text search with pagination, filtering by genre and sorting by rating, title, 
+                        and relevance''',
+            response_description='Films list with base info')
 async def films_search(params: FilmQueryParamsSearch = Depends(),
                        film_service: FilmService = Depends(get_film_service)) -> List[BaseFilm]:
     films = await get_films(params, film_service)
     return films
 
 
-@router.get('/{film_id}', response_model=Film)
+@router.get('/{film_id}',
+            response_model=Film,
+            description='Detailed info about film including description, rating, genres, persons etc',
+            response_description='Film details')
 async def film_details(film_id: UUID, film_service: FilmService = Depends(get_film_service)) -> Film:
     module_logger.info('Getting film with id (%s)', film_id)
     film = await film_service.get_by_id(str(film_id))

@@ -25,21 +25,30 @@ async def get_genres(params: QueryParamsBase, genre_service: GenreService) -> Li
     return [Genre(**genre.dict()) for genre in genres]
 
 
-@router.get('/', response_model=List[BaseGenre])
+@router.get('/',
+            response_model=List[BaseGenre],
+            description='Info about genres with pagination and sorting by name',
+            response_description='Genres list with base info')
 async def genres_info(params: GenreQueryParamsInfo = Depends(),
                       genre_service: GenreService = Depends(get_genre_service)) -> List[BaseGenre]:
     genres = await get_genres(params, genre_service)
     return genres
 
 
-@router.get('/search', response_model=List[BaseGenre])
+@router.get('/search',
+            response_model=List[BaseGenre],
+            description='Genres full-text search with pagination and sorting by name and relevance',
+            response_description='Genres list with base info')
 async def genres_search(params: GenreQueryParamsSearch = Depends(),
                         genre_service: GenreService = Depends(get_genre_service)) -> List[BaseGenre]:
     genres = await get_genres(params, genre_service)
     return genres
 
 
-@router.get('/{genre_id}', response_model=Genre)
+@router.get('/{genre_id}',
+            response_model=Genre,
+            description='Detailed info about genre including description',
+            response_description='Genre details')
 async def genre_details(genre_id: UUID, genre_service: GenreService = Depends(get_genre_service)) -> Genre:
     module_logger.info('Getting genre with id (%s)', genre_id)
     genre = await genre_service.get_by_id(str(genre_id))

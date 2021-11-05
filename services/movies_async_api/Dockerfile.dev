@@ -11,4 +11,6 @@ RUN pip install -r dev.txt
 
 COPY ./src .
 
+COPY ./tests tests
+
 CMD ["python", "main.py"]

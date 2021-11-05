@@ -8,8 +8,8 @@ from queryes.base import QueryParamsBase
 
 class FilmQueryParamsInfo(QueryParamsBase):
     def __init__(self,
-                 page_number: int = Query(0, alias='page[number]', description='Page number'),
-                 page_size: int = Query(config.PAGE_SIZE, alias='page[size]',
+                 page_number: int = Query(0, ge=0, alias='page[number]', description='Page number'),
+                 page_size: int = Query(config.PAGE_SIZE, gt=0, alias='page[size]',
                                         description='Number of items per page'),
                  sort: str = Query(None, regex='^-?(imdb_rating|title)$',
                                    description='Field to sort by (imdb_rating, title)'),
@@ -21,8 +21,8 @@ class FilmQueryParamsInfo(QueryParamsBase):
 
 class FilmQueryParamsSearch(QueryParamsBase):
     def __init__(self,
-                 page_number: int = Query(0, alias='page[number]', description='Page number'),
-                 page_size: int = Query(config.PAGE_SIZE, alias='page[size]',
+                 page_number: int = Query(0, ge=0, alias='page[number]', description='Page number'),
+                 page_size: int = Query(config.PAGE_SIZE, gt=0, alias='page[size]',
                                         description='Number of items per page'),
                  sort: str = Query(None, regex='^-?(imdb_rating|title)$',
                                    description='Field to sort results by (imdb_rating, title). Default - by relevance'),

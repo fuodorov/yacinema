@@ -66,9 +66,8 @@ class QueryParamsBase:
 
         self.sort = None
         if sort:
-            sort_desc = sort[0] == '-'
-            self.sort = {'field': sort[1 if sort_desc else 0:],
-                         'desc': sort_desc}
+            self.sort = {'field': sort.removeprefix('-'),
+                         'desc': sort.startswith('-')}
 
     def asdict(self):
         return {

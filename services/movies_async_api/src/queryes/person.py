@@ -8,8 +8,8 @@ from queryes.base import QueryParamsBase
 
 class PersonQueryParamsInfo(QueryParamsBase):
     def __init__(self,
-                 page_number: int = Query(0, alias='page[number]', description='Page number'),
-                 page_size: int = Query(config.PAGE_SIZE, alias='page[size]',
+                 page_number: int = Query(0, ge=0, alias='page[number]', description='Page number'),
+                 page_size: int = Query(config.PAGE_SIZE, gt=0, alias='page[size]',
                                         description='Number of items per page'),
                  sort: str = Query(None, regex='^-?(full_name)$',
                                    description='Field to sort by full_name'),
@@ -20,8 +20,8 @@ class PersonQueryParamsInfo(QueryParamsBase):
 
 class PersonQueryParamsSearch(QueryParamsBase):
     def __init__(self,
-                 page_number: int = Query(0, alias='page[number]', description='Page number'),
-                 page_size: int = Query(config.PAGE_SIZE, alias='page[size]',
+                 page_number: int = Query(0, ge=0, alias='page[number]', description='Page number'),
+                 page_size: int = Query(config.PAGE_SIZE, gt=0, alias='page[size]',
                                         description='Number of items per page'),
                  sort: str = Query(None, regex='^-?(full_name)$',
                                    description='Field to sort results by full_name. Default - by relevance'),
