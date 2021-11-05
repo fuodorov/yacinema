@@ -1,0 +1,22 @@
+tags:
+- "account"
+summary: "Update user login"
+parameters:
+- in: "header"
+  name: "Authorization"
+  description: "Access token"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- in: "body"
+  name: "body"
+  description: "Update login schema"
+  schema:
+    $ref: "#/definitions/PatchLogin"
+responses:
+  200:
+    description: "Updated successfully"
+  401:
+    description: "You are unauthorized"
+  422:
+    description: "Bad Authorization header"

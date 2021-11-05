@@ -1,0 +1,105 @@
+swagger: "2.0"
+info:
+  description: "Auth Server"
+  version: "1.0.0"
+  title: "Swagger Doc"
+
+definitions:
+  Login:
+    type: "object"
+    required:
+      - "email"
+      - "password"
+    properties:
+      email:
+        type: "string"
+        example: "You email"
+      password:
+        type: "string"
+        example: "Top secret"
+  SignUp:
+    type: "object"
+    required:
+      - "email"
+      - "password"
+    properties:
+      email:
+        type: "string"
+        example: "You email"
+      password:
+        type: "string"
+        example: "Top secret"
+        minLength: 6
+  Tokens:
+    type: "object"
+    properties:
+      access_token:
+        type: "string"
+        description: "The access token"
+      refresh_token:
+        type: "string"
+        description: "The refresh token"
+  PatchLogin:
+    type: "object"
+    required:
+      - "login"
+    properties:
+      login:
+        type: "string"
+        example: "New login"
+  PatchPassword:
+    type: "object"
+    required:
+      - "old_password"
+      - "new_password"
+    properties:
+      old_password:
+        type: "string"
+        example: "Old password"
+      new_password:
+        type: "string"
+        example: "New password"
+        minLength: 6
+  UserSignIn:
+    type: "object"
+    properties:
+      logined_by:
+        type: "string"
+      user_agent:
+        type: "string"
+      user_device_type:
+        type: "string"
+  JWT:
+    type: "string"
+    example: "Bearer <JWT>"
+  AccessCheck:
+    type: "object"
+    properties:
+      access:
+        type: "boolean"
+        default: false
+        description: "True or False"
+  Roles:
+    type: "object"
+    properties:
+      roles:
+        type: "array"
+        items:
+          type: "string"
+  Role:
+    type: "object"
+    properties:
+      role:
+        type: "string"
+  PatchRole:
+    type: "object"
+    required:
+      - "old_role"
+      - "new_role"
+    properties:
+      old_role:
+        type: "string"
+        example: "Old role"
+      new_role:
+        type: "string"
+        example: "New role"

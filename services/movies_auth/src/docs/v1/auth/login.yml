@@ -1,0 +1,18 @@
+tags:
+- "auth"
+summary: "Sign in to system"
+parameters:
+- in: "body"
+  name: "body"
+  description: "Login object that needs to be added"
+  schema:
+    $ref: "#/definitions/Login"
+responses:
+  200:
+    description: "Login successfully"
+    schema:
+      $ref: "#/definitions/Tokens"
+  400:
+    description: "Bad request"
+  409:
+    description: "Bad email or password"

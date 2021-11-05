@@ -1,0 +1,16 @@
+tags:
+- "auth"
+summary: "Sign up in system"
+parameters:
+- in: "body"
+  name: "body"
+  description: "SignUp object that needs to be added"
+  schema:
+    $ref: "#/definitions/SignUp"
+responses:
+  200:
+    description: "Registered successfully"
+  400:
+    description: "Bad request"
+  409:
+    description: "Email already exists"

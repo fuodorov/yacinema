@@ -1,0 +1,17 @@
+tags:
+- "auth"
+summary: "Logout from all user accounts"
+parameters:
+- in: "header"
+  name: "Authorization"
+  description: "Access token"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "All user tokens are revoked"
+  401:
+    description: "You are unauthorized"
+  422:
+    description: "Bad Authorization header"

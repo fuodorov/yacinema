@@ -52,6 +52,14 @@ services:
       - redis
       - postgres
       - elasticsearch
+  movies_auth:
+    build:
+      context: ./services/movies_auth/
+    container_name: movies_auth
+    restart: on-failure
+    depends_on:
+      - redis
+      - postgres
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
     container_name: elasticsearch

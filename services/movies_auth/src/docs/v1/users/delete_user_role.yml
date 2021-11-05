@@ -1,0 +1,28 @@
+tags:
+- "users"
+summary: "Set superuser"
+parameters:
+- in: "path"
+  name: "user_id"
+  description: "User uuid"
+  required: true
+- in: "header"
+  name: "Authorization"
+  description: "Access token"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- in: "body"
+  name: "body"
+  description: "Role object that needs to be deleted"
+  schema:
+    $ref: "#/definitions/Role"
+responses:
+  200:
+    description: "Success deleted"
+  401:
+    description: "Superuser requered"
+  409:
+    description: "User or Role does not exist / user has not role"
+  422:
+    description: "Bad Authorization header"
