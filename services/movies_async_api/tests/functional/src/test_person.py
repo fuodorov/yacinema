@@ -78,20 +78,17 @@ class TestPerson(TestAPIBase):
         assert len(r.body) == len(persons_list_expected)
         assert r.body == persons_list_expected
 
-    @pytest.mark.parametrize(['page_num', 'page_size'], [(None, None), (0, None), (None, 10), (1, 1)])
+    @pytest.mark.parametrize('params', [{},
+                                        {'page[number]': 0},
+                                        {'page[size]': 10},
+                                        {'page[number]': 1, 'page[size]': 1}])
     async def test_person_query_page_correct(self, persons_index, bulk_persons_data, make_get_request,
-                                             endpoint_person_url, persons_list_expected, page_num, page_size):
-        params = {}
-        if page_num:
-            params['page[number]'] = page_num
-        if page_size:
-            params['page[size]'] = page_size
-
+                                             endpoint_person_url, persons_list_expected, params):
         r = await make_get_request('', endpoint_person_url, params)
         assert r.status == HTTPStatus.OK
 
-        expected_page_num = page_num or 0
-        expected_page_size = page_size or 50
+        expected_page_num = params.get('page[number]', 0)
+        expected_page_size = params.get('page[size]', 50)
         assert len(r.body) <= expected_page_size
         assert r.body == get_page_items(persons_list_expected, expected_page_num, expected_page_size)
 
@@ -189,14 +186,14 @@ class TestPersonDetails(TestAPIBase):
         r = await make_get_request(person_uuid, endpoint_person_url)
         assert r.status == HTTPStatus.OK
 
-    async def test_person_details_not_found(self, persons_index, bulk_persons_data, make_get_request, endpoint_person_url,
-                                            persons_details_expected):
+    async def test_person_details_not_found(self, persons_index, bulk_persons_data, make_get_request,
+                                            endpoint_person_url, persons_details_expected):
         person_uuid = '21d53e36-b761-4f61-b054-8523be7493c1'
         r = await make_get_request(person_uuid, endpoint_person_url)
         assert r.status == HTTPStatus.NOT_FOUND
 
-    async def test_person_details_incorrect(self, persons_index, bulk_persons_data, make_get_request, endpoint_person_url,
-                                            persons_details_expected):
+    async def test_person_details_incorrect(self, persons_index, bulk_persons_data, make_get_request,
+                                            endpoint_person_url, persons_details_expected):
         person_uuid = 'blablabla'
         r = await make_get_request(person_uuid, endpoint_person_url)
         assert r.status == HTTPStatus.UNPROCESSABLE_ENTITY
