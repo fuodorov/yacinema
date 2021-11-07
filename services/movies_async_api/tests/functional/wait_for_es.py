@@ -1,8 +1,15 @@
 import asyncio
+import logging
+from logging import config as logging_config
 
 from elasticsearch import AsyncElasticsearch
 
+from logger import LOGGER_CONFIG
 from settings import ELASTIC_HOST, ELASTIC_PORT
+
+
+logging_config.dictConfig(LOGGER_CONFIG)
+logger = logging.getLogger('ESWaiter')
 
 
 async def connect_to_es():
@@ -20,7 +27,7 @@ async def main():
     try:
         await asyncio.wait_for(connect_to_es(), timeout=100)
     except asyncio.TimeoutError:
-        print('Failed to connect elastic!')
+        logger.error('Failed to connect elastic!')
 
 
 if __name__ == '__main__':

@@ -78,20 +78,17 @@ class TestGenre(TestAPIBase):
         assert len(r.body) == len(genres_list_expected)
         assert r.body == genres_list_expected
 
-    @pytest.mark.parametrize(['page_num', 'page_size'], [(None, None), (0, None), (None, 10), (1, 10)])
+    @pytest.mark.parametrize('params', [{},
+                                        {'page[number]': 0},
+                                        {'page[size]': 10},
+                                        {'page[number]': 1, 'page[size]': 10}])
     async def test_genre_query_page_correct(self, genres_index, bulk_genres_data, make_get_request, endpoint_genre_url,
-                                            genres_list_expected, page_num, page_size):
-        params = {}
-        if page_num:
-            params['page[number]'] = page_num
-        if page_size:
-            params['page[size]'] = page_size
-
+                                            genres_list_expected, params):
         r = await make_get_request('', endpoint_genre_url, params)
         assert r.status == HTTPStatus.OK
 
-        expected_page_num = page_num or 0
-        expected_page_size = page_size or 50
+        expected_page_num = params.get('page[number]', 0)
+        expected_page_size = params.get('page[size]', 50)
         assert len(r.body) <= expected_page_size
         assert r.body == get_page_items(genres_list_expected, expected_page_num, expected_page_size)
 

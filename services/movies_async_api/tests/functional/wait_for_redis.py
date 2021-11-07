@@ -1,8 +1,15 @@
 import asyncio
+import logging
+from logging import config as logging_config
 
 import aioredis
 
+from logger import LOGGER_CONFIG
 from settings import REDIS_HOST, REDIS_PORT, REDIS_TEST_DB
+
+
+logging_config.dictConfig(LOGGER_CONFIG)
+logger = logging.getLogger('RedisWaiter')
 
 
 async def connect_to_redis():
@@ -21,7 +28,7 @@ async def main():
     try:
         await asyncio.wait_for(connect_to_redis(), timeout=100)
     except asyncio.TimeoutError:
-        print('Failed to connect redis!')
+        logger.error('Failed to connect redis!')
 
 
 if __name__ == '__main__':
