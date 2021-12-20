@@ -1,0 +1,23 @@
+tags:
+- "User Permissions"
+summary: "Set superuser"
+parameters:
+- in: "path"
+  name: "user_id"
+  description: "User uuid"
+  required: true
+- in: "header"
+  name: "Authorization"
+  description: "Access token"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Sucess superuser granted"
+  401:
+    description: "Superuser requered"
+  409:
+    description: "User does not exist or already superuser"
+  422:
+    description: "Bad Authorization header"

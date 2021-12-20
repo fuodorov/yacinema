@@ -1,0 +1,19 @@
+tags:
+- "Tokens"
+summary: "Sign in to system"
+parameters:
+- description: "User Credentials"
+  in: "body"
+  name: "body"
+  required: true
+  schema:
+    $ref: "#/definitions/Login"
+responses:
+  200:
+    description: "Login successfully"
+    schema:
+      $ref: "#/definitions/Tokens"
+  400:
+    description: "Bad request"
+  409:
+    description: "Bad email or password"

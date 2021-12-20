@@ -1,0 +1,17 @@
+tags:
+- "Tokens"
+summary: "Delete access and refresh tokens (logout)"
+parameters:
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Tokens deleted"
+  401:
+    description: "You are unauthorized"
+  422:
+    description: "Bad Authorization header"

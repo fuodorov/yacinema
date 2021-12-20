@@ -37,6 +37,13 @@ services:
       - "8000:8000"
     env_file:
       - ./.env.dev
+  movies_auth:
+    build:
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./.env.dev
   elasticsearch:
     ports:
       - "9200:9200"
@@ -50,3 +57,27 @@ services:
       - "6379:6379"
     env_file:
       - ./.env.dev
+  postgres_auth:
+    ports:
+      - "5433:5432"
+    env_file:
+      - ./.env.dev
+  redis_auth:
+    ports:
+      - "6380:6379"
+    env_file:
+      - ./.env.dev
+  nginx:
+    build: ./services/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - movies_admin
+      - movies_async_api
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: movies_jaeger
+    ports:
+      - "6831:6831"
+      - "16686:16686"

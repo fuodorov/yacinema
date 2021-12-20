@@ -1,0 +1,35 @@
+tags:
+- "Roles"
+summary: "Add permission to the role"
+post:
+parameters:
+- description: "Role name"
+  in: "path"
+  name: "role_name"
+  type: "string"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- description: "Permission to add"
+  in: "body"
+  name: "body"
+  required: true
+  schema:
+    $ref: "#/definitions/ItemToAddByName"
+responses:
+  200:
+    description: "Added Successfully"
+    schema:
+      $ref: "#/definitions/RoleInfo"
+  401:
+    description: "Superuser requered"
+  404:
+    description: "Role not found"
+  409:
+    description: "Permission already exists"
+  422:
+    description: "Bad Authorization header"

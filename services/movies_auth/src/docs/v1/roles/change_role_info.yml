@@ -1,0 +1,32 @@
+tags:
+- "Roles"
+summary: "Change role info"
+parameters:
+- description: "Role name"
+  in: "path"
+  name: "role_name"
+  type: "string"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- description: "Role info changes"
+  in: "body"
+  name: "body"
+  required: true
+  schema:
+    $ref: "#/definitions/RoleInfoPatch"
+responses:
+  200:
+    description: "Patched successfully"
+    schema:
+      $ref: "#/definitions/RoleInfo"
+  401:
+    description: "Superuser requered"
+  404:
+    description: "Role not found"
+  422:
+    description: "Bad Authorization header"

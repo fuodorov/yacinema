@@ -1,0 +1,21 @@
+tags:
+- "Permissions"
+summary: "Get all permissions"
+parameters:
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Permissions"
+    schema:
+      type: "array"
+      items:
+        $ref: "#/definitions/PermissionInfo"
+  401:
+    description: "Superuser requered"
+  422:
+    description: "Bad Authorization header"

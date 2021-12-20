@@ -1,0 +1,10 @@
+tags:
+- "Tokens"
+summary: "Google auth callback"
+responses:
+  200:
+    description: "Login successfully"
+    schema:
+      $ref: "#/definitions/Tokens"
+  400:
+    description: "Bad request"

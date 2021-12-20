@@ -1,0 +1,21 @@
+tags:
+- "users"
+summary: "Revoke user access tokens"
+parameters:
+- in: "path"
+  name: "user_id"
+  description: "User uuid"
+  required: true
+- in: "header"
+  name: "Authorization"
+  description: "Access token"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Revokes success"
+  401:
+    description: "Superuser requered"
+  422:
+    description: "Bad Authorization header"

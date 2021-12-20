@@ -1,0 +1,17 @@
+tags:
+- "auth"
+summary: "Check user has role"
+parameters:
+- in: "header"
+  name: "Authorization"
+  description: "Access token"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Access: True or False"
+    schema:
+      $ref: "#/definitions/AccessCheck"
+  422:
+    description: "Bad Authorization header"

@@ -1,0 +1,19 @@
+tags:
+- "Users"
+summary: "Add new user"
+parameters:
+- in: "body"
+  name: "body"
+  description: "New User"
+  required: true
+  schema:
+    $ref: "#/definitions/UserRegistrationInfo"
+responses:
+  201:
+    description: "User created"
+    schema:
+      $ref: "#/definitions/UserInfo"
+  400:
+    description: "Bad request"
+  409:
+    description: "Email or already exists"

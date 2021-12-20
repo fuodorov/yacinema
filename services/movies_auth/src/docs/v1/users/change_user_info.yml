@@ -1,0 +1,33 @@
+tags:
+- "Users"
+summary: "Change user details"
+parameters:
+- description: "User uuid"
+  in: "path"
+  name: "user_id"
+  type: "string"
+  format: "uuid"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- description: "User changes"
+  in: "body"
+  name: "body"
+  required: true
+  schema:
+    $ref: "#/definitions/UserInfoPatch"
+responses:
+  200:
+    description: "Successfully patched"
+    schema:
+      $ref: "#/definitions/UserInfo"
+  401:
+    description: "You are unauthorized"
+  404:
+    description: "User not found"
+  422:
+    description: "Bad Authorization header"

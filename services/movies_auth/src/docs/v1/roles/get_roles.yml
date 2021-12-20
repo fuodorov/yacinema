@@ -1,0 +1,21 @@
+tags:
+- "Roles"
+summary: "Get all roles"
+parameters:
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Roles"
+    schema:
+      type: "array"
+      items:
+        $ref: "#/definitions/RoleInfo"
+  401:
+    description: "Superuser requered"
+  422:
+    description: "Bad Authorization header"

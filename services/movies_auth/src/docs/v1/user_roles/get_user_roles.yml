@@ -1,0 +1,29 @@
+tags:
+- "User Roles"
+summary: "Get all user roles"
+parameters:
+- description: "User uuid"
+  in: "path"
+  name: "user_id"
+  type: "string"
+  format: "uuid"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Success"
+    schema:
+      type: "array"
+      items:
+        $ref: "#/definitions/RoleInfo"
+  401:
+    description: "Superuser requered"
+  404:
+    description: "User not found"
+  422:
+    description: "Bad Authorization header"

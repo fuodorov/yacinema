@@ -1,0 +1,6 @@
+tags:
+- "Tokens"
+summary: "Sign in or sign up by google"
+responses:
+  302:
+    description: "Redirect to google auth uri"

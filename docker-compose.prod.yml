@@ -37,6 +37,14 @@ services:
       - 8000
     env_file:
       - ./.env.prod
+  movies_auth:
+    build:
+      dockerfile: Dockerfile.prod
+    command: gunicorn --worker-class gevent -w 4 pywsgi:app --bind 0.0.0.0:5000
+    expose:
+      - 5000
+    env_file:
+      - ./.env.prod
   elasticsearch:
     expose:
       - 9200
@@ -46,6 +54,16 @@ services:
     env_file:
       - ./.env.prod
   redis:
+    expose:
+      - 6379
+    env_file:
+      - ./.env.prod
+  postgres_auth:
+    expose:
+      - 5432
+    env_file:
+      - ./.env.prod
+  redis_auth:
     expose:
       - 6379
     env_file:

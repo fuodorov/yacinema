@@ -1,0 +1,19 @@
+tags:
+- "Tokens"
+summary: "Refresh access and refresh tokens"
+parameters:
+- description: "Refresh token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Tokens refreshed successfully"
+    schema:
+      $ref: "#/definitions/Tokens"
+  401:
+    description: "You are unauthorized"
+  422:
+    description: "Bad Authorization header"

@@ -1,0 +1,37 @@
+tags:
+- "User Permissions"
+summary: "Add permission to the user permissions"
+parameters:
+- description: "User uuid"
+  in: "path"
+  name: "user_id"
+  type: "string"
+  format: "uuid"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- description: "Permission to add"
+  in: "body"
+  name: "body"
+  required: true
+  schema:
+    $ref: "#/definitions/ItemToAddByName"
+responses:
+  200:
+    description: "Added Successfully"
+    schema:
+      type: "array"
+      items:
+        $ref: "#/definitions/PermissionInfo"
+  401:
+    description: "You are not authorized"
+  404:
+    description: "User or permission not found"
+  409:
+    description: "User already has the permission"
+  422:
+    description: "Bad Authorization header"

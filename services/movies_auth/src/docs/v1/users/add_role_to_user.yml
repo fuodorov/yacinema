@@ -1,0 +1,28 @@
+tags:
+- "users"
+summary: "Add new role to user"
+parameters:
+- in: "path"
+  name: "user_id"
+  description: "User uuid"
+  required: true
+- in: "header"
+  name: "Authorization"
+  description: "Access token"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- in: "body"
+  name: "body"
+  description: "Role object that needs to be added"
+  schema:
+    $ref: "#/definitions/Role"
+responses:
+  200:
+    description: "Success added"
+  401:
+    description: "Superuser requered"
+  409:
+    description: "User or Role does not exist / user already has role"
+  422:
+    description: "Bad Authorization header"
