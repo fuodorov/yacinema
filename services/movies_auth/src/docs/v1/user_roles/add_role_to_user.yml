@@ -1,0 +1,37 @@
+tags:
+- "User Roles"
+summary: "Add role to the user roles"
+parameters:
+- description: "User uuid"
+  in: "path"
+  name: "user_id"
+  type: "string"
+  format: "uuid"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- description: "Role to add"
+  in: "body"
+  name: "body"
+  required: true
+  schema:
+    $ref: "#/definitions/ItemToAddByName"
+responses:
+  200:
+    description: "Added Successfully"
+    schema:
+      type: "array"
+      items:
+        $ref: "#/definitions/RoleInfo"
+  401:
+    description: "Superuser requered"
+  404:
+    description: "User or role not found"
+  409:
+    description: "User already has the role"
+  422:
+    description: "Bad Authorization header"

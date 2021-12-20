@@ -1,0 +1,36 @@
+tags:
+- "User Permissions"
+summary: "Remove permission from the user permissions"
+parameters:
+- description: "User uuid"
+  in: "path"
+  name: "user_id"
+  type: "string"
+  format: "uuid"
+  required: true
+- description: "Permission name"
+  in: "path"
+  name: "permission_name"
+  type: "string"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Deleted Successfully"
+    schema:
+      type: "array"
+      items:
+        $ref: "#/definitions/PermissionInfo"
+  401:
+    description: "You are not authorized"
+  404:
+    description: "User not found"
+  409:
+    description: "Permission is required by user's role or doesn't exist in user permissions"
+  422:
+    description: "Bad Authorization header"

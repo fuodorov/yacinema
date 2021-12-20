@@ -1,24 +1,27 @@
 tags:
-- "roles"
+- "Roles"
 summary: "Add new role"
 parameters:
-- in: "header"
+- description: "Access token"
+  in: "header"
   name: "Authorization"
-  description: "Access token"
   required: true
   schema:
     $ref: "#/definitions/JWT"
-- in: "body"
+- description: "Role object that needs to be added"
+  in: "body"
   name: "body"
-  description: "Role object that needs to be added"
+  required: true
   schema:
-    $ref: "#/definitions/Role"
+    $ref: "#/definitions/NewRoleInfo"
 responses:
-  200:
-    description: "Sucess added"
+  201:
+    description: "Added Successfully"
+    schema:
+      $ref: "#/definitions/RoleInfo"
   401:
     description: "Superuser requered"
   409:
-    description: "Roles already exist"
+    description: "Role already exists"
   422:
     description: "Bad Authorization header"

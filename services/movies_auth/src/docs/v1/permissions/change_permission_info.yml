@@ -1,0 +1,31 @@
+tags:
+- "Permissions"
+summary: "Change permission info"
+parameters:
+- description: "Permission name"
+  in: "path"
+  name: "permission_name"
+  type: "string"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- description: "Permission change object"
+  in: "body"
+  name: "body"
+  schema:
+    $ref: "#/definitions/PermissionInfoPatch"
+responses:
+  200:
+    description: "Patched Successfully"
+    schema:
+      $ref: "#/definitions/PermissionInfo"
+  401:
+    description: "Superuser requered"
+  404:
+    description: "Permission not found"
+  422:
+    description: "Bad Authorization header"

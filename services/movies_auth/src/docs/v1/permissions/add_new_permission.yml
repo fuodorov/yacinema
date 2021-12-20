@@ -1,0 +1,26 @@
+tags:
+- "Permissions"
+summary: "Add new permission"
+parameters:
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+- description: "Permission object that needs to be added"
+  in: "body"
+  name: "body"
+  schema:
+    $ref: '#/definitions/NewPermissionInfo'
+responses:
+  201:
+    description: "Added Successfully"
+    schema:
+      $ref: '#/definitions/PermissionInfo'
+  401:
+    description: "Superuser requered"
+  409:
+    description: "Permission already exist"
+  422:
+    description: "Bad Authorization header"

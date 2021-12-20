@@ -1,16 +1,16 @@
 tags:
-- "auth"
+- "Tokens"
 summary: "Refresh access and refresh tokens"
 parameters:
-- in: "header"
+- description: "Refresh token"
+  in: "header"
   name: "Authorization"
-  description: "Refresh token"
   required: true
   schema:
     $ref: "#/definitions/JWT"
 responses:
   200:
-    description: "Tokens update successfully"
+    description: "Tokens refreshed successfully"
     schema:
       $ref: "#/definitions/Tokens"
   401:

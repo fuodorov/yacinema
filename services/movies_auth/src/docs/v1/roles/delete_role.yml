@@ -1,24 +1,24 @@
 tags:
-- "roles"
+- "Roles"
 summary: "Delete role"
 parameters:
-- in: "header"
+- description: "Role name"
+  in: "path"
+  name: "role_name"
+  type: "string"
+  required: true
+- description: "Access token"
+  in: "header"
   name: "Authorization"
-  description: "Access token"
   required: true
   schema:
     $ref: "#/definitions/JWT"
-- in: "body"
-  name: "body"
-  description: "Role object that needs to be deleted"
-  schema:
-    $ref: "#/definitions/Role"
 responses:
   200:
-    description: "Sucess deleted"
+    description: "Deleted successfully"
   401:
     description: "Superuser requered"
   409:
-    description: "Roles does not exist"
+    description: "Role does not exist"
   422:
     description: "Bad Authorization header"

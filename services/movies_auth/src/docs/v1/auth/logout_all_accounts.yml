@@ -1,16 +1,16 @@
 tags:
-- "auth"
-summary: "Logout from all user accounts"
+- "Tokens"
+summary: "Delete all access and refresh tokens of the user (logout on all devices)"
 parameters:
-- in: "header"
+- description: "Access token"
+  in: "header"
   name: "Authorization"
-  description: "Access token"
   required: true
   schema:
     $ref: "#/definitions/JWT"
 responses:
   200:
-    description: "All user tokens are revoked"
+    description: "All tokens deleted"
   401:
     description: "You are unauthorized"
   422:

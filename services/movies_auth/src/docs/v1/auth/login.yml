@@ -1,10 +1,11 @@
 tags:
-- "auth"
+- "Tokens"
 summary: "Sign in to system"
 parameters:
-- in: "body"
+- description: "User Credentials"
+  in: "body"
   name: "body"
-  description: "Login object that needs to be added"
+  required: true
   schema:
     $ref: "#/definitions/Login"
 responses:

@@ -1,0 +1,29 @@
+tags:
+- "Tokens"
+summary: "Validate access token"
+parameters:
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Token is valid"
+    schema:
+      $ref: "#/definitions/ResponseMsg"
+    examples:
+      application/json: '{ "msg": "Token is valid" }'
+  401:
+    description: "\'Token has been revoked\' or \'Token has expired\'"
+    schema:
+      $ref: "#/definitions/ResponseMsg"
+    examples:
+      application/json: '{ "msg": "Token has been revoked" }'
+  422:
+    description: "Signature verification failed"
+    schema:
+      $ref: "#/definitions/ResponseMsg"
+    examples:
+      application/json: '{ "msg": "Signature verification failed" }'

@@ -1,0 +1,1137 @@
+definitions:
+  AccessCheck:
+    properties:
+      access:
+        default: false
+        description: True or False
+        type: boolean
+    type: object
+  ItemToAddByName:
+    properties:
+      name:
+        example: some_name
+        type: string
+    required:
+      - name
+    type: object
+  JWT:
+    example: Bearer <JWT>
+    type: string
+  Login:
+    properties:
+      email:
+        example: You email
+        type: string
+      password:
+        example: Top secret
+        type: string
+    required:
+      - email
+      - password
+    type: object
+  NewPasswordInfo:
+    properties:
+      new_password:
+        example: New password
+        minLength: 6
+        type: string
+      old_password:
+        example: Old password
+        type: string
+    required:
+      - old_password
+      - new_password
+    type: object
+  NewPermissionInfo:
+    properties:
+      description:
+        example: Read access to pro content
+        type: string
+      name:
+        example: pro_content_read
+        type: string
+    required:
+      - name
+    type: object
+  NewRoleInfo:
+    properties:
+      description:
+        example: Pro user with paid account
+        type: string
+      name:
+        example: pro
+        type: string
+    required:
+      - name
+    type: object
+  PatchLogin:
+    properties:
+      login:
+        example: New login
+        type: string
+    required:
+      - login
+    type: object
+  PatchPassword:
+    properties:
+      new_password:
+        example: New password
+        minLength: 6
+        type: string
+      old_password:
+        example: Old password
+        type: string
+    required:
+      - old_password
+      - new_password
+    type: object
+  PatchRole:
+    properties:
+      new_role:
+        example: New role
+        type: string
+      old_role:
+        example: Old role
+        type: string
+    required:
+      - old_role
+      - new_role
+    type: object
+  PermissionInfo:
+    properties:
+      description:
+        example: Read access to pro content
+        type: string
+      name:
+        example: pro_content_read
+        type: string
+      uuid:
+        $ref: '#/definitions/UUID'
+    required:
+      - uuid
+      - name
+      - description
+    type: object
+  PermissionInfoPatch:
+    properties:
+      description:
+        example: Read access to pro content
+        type: string
+    type: object
+  Role:
+    properties:
+      role:
+        type: string
+    type: object
+  RoleInfo:
+    properties:
+      description:
+        example: Pro user with paid account
+        type: string
+      name:
+        example: pro
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/PermissionInfo'
+        type: array
+      uuid:
+        $ref: '#/definitions/UUID'
+    required:
+      - uuid
+      - name
+      - description
+      - permissions
+    type: object
+  RoleInfoPatch:
+    properties:
+      description:
+        example: Pro user with paid account
+        type: string
+      name:
+        example: pro
+        type: string
+    type: object
+  Roles:
+    properties:
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  SignUp:
+    properties:
+      email:
+        example: You email
+        type: string
+      password:
+        example: Top secret
+        minLength: 6
+        type: string
+    required:
+      - email
+      - password
+    type: object
+  Tokens:
+    properties:
+      access_token:
+        description: The access token
+        type: string
+      refresh_token:
+        description: The refresh token
+        type: string
+    type: object
+  ResponseMsg:
+    properties:
+      msg:
+        description: Message
+        type: string
+    type: object
+  UUID:
+    format: uuid
+    type: string
+  UUIDs:
+    items:
+      $ref: '#/definitions/UUID'
+    type: array
+  User:
+    properties:
+      email:
+        example: You email
+        type: string
+      name:
+        example: Mike777
+        type: string
+      password:
+        example: password
+        minLength: 6
+        type: string
+      uuid:
+        $ref: '#/definitions/UUID'
+    required:
+      - email
+      - login
+      - password
+    type: object
+  UserInfo:
+    properties:
+      email:
+        example: You email
+        type: string
+      name:
+        example: Mike777
+        type: string
+      uuid:
+        $ref: '#/definitions/UUID'
+    required:
+      - uuid
+      - email
+      - name
+    type: object
+  UserInfoPatch:
+    properties:
+      email:
+        example: You email
+        type: string
+      name:
+        example: Mike777
+        type: string
+    type: object
+  UserRegistrationInfo:
+    properties:
+      email:
+        example: You email
+        type: string
+      name:
+        example: Mike777
+        type: string
+      password:
+        example: password
+        minLength: 6
+        type: string
+    required:
+      - email
+      - name
+      - password
+    type: object
+  UserSignIn:
+    properties:
+      logined_by:
+        type: string
+      user_agent:
+        type: string
+      user_device_type:
+        type: string
+    type: object
+  ValidationInfo:
+    properties:
+      valid:
+        type: boolean
+    required:
+      - valid
+    type: object
+info:
+  description: Auth Server
+  title: Swagger Doc
+  version: 1.0.0
+paths:
+  /auth/v1/auth_token:
+    delete:
+      parameters:
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Tokens deleted
+        '401':
+          description: You are unauthorized
+        '422':
+          description: Bad Authorization header
+      summary: Delete access and refresh tokens (logout)
+      tags:
+        - Tokens
+    post:
+      parameters:
+        - description: User Credentials
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      responses:
+        '200':
+          description: Login successfully
+          schema:
+            $ref: '#/definitions/Tokens'
+        '400':
+          description: Bad request
+        '409':
+          description: Bad email or password
+      summary: Sign in to system
+      tags:
+        - Tokens
+  /auth/v1/auth_token/all:
+    delete:
+      parameters:
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: All tokens deleted
+        '401':
+          description: You are unauthorized
+        '422':
+          description: Bad Authorization header
+      summary: Delete all access and refresh tokens of the user (logout on all devices)
+      tags:
+        - Tokens
+  /auth/v1/auth_token/token_refresh:
+    post:
+      parameters:
+        - description: Refresh token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Tokens refreshed successfully
+          schema:
+            $ref: '#/definitions/Tokens'
+        '401':
+          description: You are unauthorized
+        '422':
+          description: Bad Authorization header
+      summary: Refresh access and refresh tokens
+      tags:
+        - Tokens
+  /auth/v1/auth_token/validation:
+    get:
+      parameters:
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Token is valid
+          schema:
+            $ref: '#/definitions/ResponseMsg'
+          examples:
+            application/json: { "msg": "Token is valid" }
+        '401':
+          description: \'Token has been revoked\' or \'Token has expired\'
+          schema:
+            $ref: '#/definitions/ResponseMsg'
+          examples:
+            application/json: { "msg": "Token has been revoked" }
+        '422':
+          description: Signature verification failed
+          schema:
+            $ref: '#/definitions/ResponseMsg'
+          examples:
+            application/json: { "msg": "Signature verification failed" }
+      summary: Validate access token
+      tags:
+        - Tokens
+
+  /auth/v1/users:
+    post:
+      parameters:
+        - description: New User
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserRegistrationInfo'
+      responses:
+        '201':
+          description: User created
+          schema:
+            $ref: '#/definitions/UserInfo'
+        '400':
+          description: Bad request
+        '409':
+          description: Email or already exists
+      summary: Add new user
+      tags:
+        - Users
+  /auth/v1/users/{user_id}:
+    get:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserInfo'
+        '401':
+          description: You are unauthorized
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Get user info
+      tags:
+        - Users
+    patch:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: User changes
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserInfoPatch'
+      responses:
+        '200':
+          description: Successfully patched
+          schema:
+            $ref: '#/definitions/UserInfo'
+        '401':
+          description: You are unauthorized
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Change user details
+      tags:
+        - Users
+  /auth/v1/users/{user_id}/logins:
+    get:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/UserSignIn'
+            type: array
+        '401':
+          description: You are unauthorized
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Get user login history
+      tags:
+        - Users
+  /auth/v1/users/{user_id}/password_change:
+    post:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Password Change
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewPasswordInfo'
+      responses:
+        '201':
+          description: Password Changed
+        '401':
+          description: You are unauthorized
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Change user password
+      tags:
+        - Users
+
+  /auth/v1/permissions:
+    get:
+      parameters:
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Permissions
+          schema:
+            items:
+              $ref: '#/definitions/PermissionInfo'
+            type: array
+        '401':
+          description: Superuser requered
+        '422':
+          description: Bad Authorization header
+      summary: Get all permissions
+      tags:
+        - Permissions
+    post:
+      parameters:
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Permission object that needs to be added
+          in: body
+          name: body
+          schema:
+            $ref: '#/definitions/NewPermissionInfo'
+      responses:
+        '201':
+          description: Added Successfully
+          schema:
+            $ref: '#/definitions/PermissionInfo'
+        '401':
+          description: Superuser requered
+        '409':
+          description: Permission already exist
+        '422':
+          description: Bad Authorization header
+      summary: Add new permission
+      tags:
+        - Permissions
+  /auth/v1/permissions/{permission_name}:
+    delete:
+      parameters:
+        - description: Permission name
+          in: path
+          name: permission_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Deleted successfully
+        '401':
+          description: Superuser requered
+        '409':
+          description: Permission does not exist
+        '422':
+          description: Bad Authorization header
+      summary: Delete permission
+      tags:
+        - Permissions
+    patch:
+      parameters:
+        - description: Permission name
+          in: path
+          name: permission_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Permission change object
+          in: body
+          name: body
+          schema:
+            $ref: '#/definitions/PermissionInfoPatch'
+      responses:
+        '200':
+          description: Patched Successfully
+          schema:
+            $ref: '#/definitions/PermissionInfo'
+        '401':
+          description: Superuser requered
+        '404':
+          description: Permission not found
+        '422':
+          description: Bad Authorization header
+      summary: Change permission info
+      tags:
+        - Permissions
+  /auth/v1/roles:
+    get:
+      parameters:
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Roles
+          schema:
+            items:
+              $ref: '#/definitions/RoleInfo'
+            type: array
+        '401':
+          description: Superuser requered
+        '422':
+          description: Bad Authorization header
+      summary: Get all roles
+      tags:
+        - Roles
+    post:
+      parameters:
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Role object that needs to be added
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewRoleInfo'
+      responses:
+        '201':
+          description: Added Successfully
+          schema:
+            $ref: '#/definitions/RoleInfo'
+        '401':
+          description: Superuser requered
+        '409':
+          description: Role already exists
+        '422':
+          description: Bad Authorization header
+      summary: Add new role
+      tags:
+        - Roles
+  /auth/v1/roles/{role_name}:
+    delete:
+      parameters:
+        - description: Role name
+          in: path
+          name: role_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Deleted successfully
+        '401':
+          description: Superuser requered
+        '409':
+          description: Role does not exist
+        '422':
+          description: Bad Authorization header
+      summary: Delete role
+      tags:
+        - Roles
+    get:
+      parameters:
+        - description: Role name
+          in: path
+          name: role_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Roles
+          schema:
+            $ref: '#/definitions/RoleInfo'
+        '401':
+          description: Superuser requered
+        '404':
+          description: Role not found
+        '422':
+          description: Bad Authorization header
+      summary: Get role info
+      tags:
+        - Roles
+    patch:
+      parameters:
+        - description: Role name
+          in: path
+          name: role_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Role info changes
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/RoleInfoPatch'
+      responses:
+        '200':
+          description: Patched successfully
+          schema:
+            $ref: '#/definitions/RoleInfo'
+        '401':
+          description: Superuser requered
+        '404':
+          description: Role not found
+        '422':
+          description: Bad Authorization header
+      summary: Change role info
+      tags:
+        - Roles
+  /auth/v1/roles/{role_name}/permissions:
+    post:
+      parameters:
+        - description: Role name
+          in: path
+          name: role_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Permission to add
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ItemToAddByName'
+      responses:
+        '200':
+          description: Added Successfully
+          schema:
+            $ref: '#/definitions/RoleInfo'
+        '401':
+          description: Superuser requered
+        '404':
+          description: Role not found
+        '409':
+          description: Permission already exists
+        '422':
+          description: Bad Authorization header
+      summary: Add permission to the role
+      tags:
+        - Roles
+  /auth/v1/roles/{role_name}/permissions/{permission_name}:
+    delete:
+      parameters:
+        - description: Role name
+          in: path
+          name: role_name
+          required: true
+          type: string
+        - description: Permission name
+          in: path
+          name: permission_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Deleted Successfully
+          schema:
+            $ref: '#/definitions/RoleInfo'
+        '401':
+          description: Superuser requered
+        '404':
+          description: Role not found
+        '409':
+          description: Permission does not exist
+        '422':
+          description: Bad Authorization header
+      summary: Remove permission from the role
+      tags:
+        - Roles
+
+  /auth/v1/users/{user_id}/combined_permissions:
+    get:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/PermissionInfo'
+            type: array
+        '401':
+          description: You are not authorized
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Get combined user permissions (based on roles and individual permissions)
+      tags:
+        - User Permissions
+  /auth/v1/users/{user_id}/combined_permissions/validation:
+    get:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Permissions to validate
+          in: query
+          name: permissions
+          required: true
+          schema:
+            example: '{"any": ["perm_1", {"all": ["perm_2", "perm_3"]}]}'
+            type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/ValidationInfo'
+        '401':
+          description: You are not authorized
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Validate user permissions (check if combined user permission contain all necessary permissions according to request)
+      tags:
+        - User Permissions
+  
+  /auth/v1/users/{user_id}/permissions:
+    get:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/PermissionInfo'
+            type: array
+        '401':
+          description: You are not authorized
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Get all individual user permissions
+      tags:
+        - User Permissions
+    post:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Permission to add
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ItemToAddByName'
+      responses:
+        '200':
+          description: Added Successfully
+          schema:
+            items:
+              $ref: '#/definitions/PermissionInfo'
+            type: array
+        '401':
+          description: You are not authorized
+        '404':
+          description: User or permission not found
+        '409':
+          description: User already has the permission
+        '422':
+          description: Bad Authorization header
+      summary: Add permission to individual user permissions
+      tags:
+        - User Permissions
+  /auth/v1/users/{user_id}/permissions/{permission_name}:
+    delete:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Permission name
+          in: path
+          name: permission_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Deleted Successfully
+          schema:
+            items:
+              $ref: '#/definitions/PermissionInfo'
+            type: array
+        '401':
+          description: You are not authorized
+        '404':
+          description: User not found
+        '409':
+          description: Permission is required by user's role or doesn't exist in user permissions
+        '422':
+          description: Bad Authorization header
+      summary: Remove permission from individual user permissions
+      tags:
+        - User Permissions
+  /auth/v1/users/{user_id}/roles:
+    get:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/RoleInfo'
+            type: array
+        '401':
+          description: Superuser requered
+        '404':
+          description: User not found
+        '422':
+          description: Bad Authorization header
+      summary: Get all user roles
+      tags:
+        - User Roles
+    post:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+        - description: Role to add
+          in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ItemToAddByName'
+      responses:
+        '200':
+          description: Added Successfully
+          schema:
+            items:
+              $ref: '#/definitions/RoleInfo'
+            type: array
+        '401':
+          description: Superuser requered
+        '404':
+          description: User or role not found
+        '409':
+          description: User already has the role
+        '422':
+          description: Bad Authorization header
+      summary: Add role to the user roles
+      tags:
+        - User Roles
+  /auth/v1/users/{user_id}/roles/{role_name}:
+    delete:
+      parameters:
+        - description: User uuid
+          format: uuid
+          in: path
+          name: user_id
+          required: true
+          type: string
+        - description: Role name
+          in: path
+          name: role_name
+          required: true
+          type: string
+        - description: Access token
+          in: header
+          name: Authorization
+          required: true
+          schema:
+            $ref: '#/definitions/JWT'
+      responses:
+        '200':
+          description: Deleted Successfully
+          schema:
+            items:
+              $ref: '#/definitions/RoleInfo'
+            type: array
+        '401':
+          description: Superuser requered
+        '404':
+          description: User not found
+        '409':
+          description: Role does not exist in user roles
+        '422':
+          description: Bad Authorization header
+      summary: Remove role from the user roles
+      tags:
+        - User Roles
+swagger: '2.0'

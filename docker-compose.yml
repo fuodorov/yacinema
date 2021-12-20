@@ -4,6 +4,8 @@ volumes:
   redis_data:
   postgres_data:
   elasticsearch_data:
+  redis_auth_data:
+  postgres_auth_data:
 
 services:
   movies_admin:
@@ -58,8 +60,8 @@ services:
     container_name: movies_auth
     restart: on-failure
     depends_on:
-      - redis
-      - postgres
+      - redis_auth
+      - postgres_auth
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
     container_name: elasticsearch
@@ -69,7 +71,7 @@ services:
     environment:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - discovery.type=single-node
-      - logger.level=ERROR
+      - logger.level=WARN
   postgres:
     image: postgres:13.0-alpine
     container_name: postgres
@@ -83,3 +85,16 @@ services:
     restart: always
     volumes:
       - redis_data:/data
+  postgres_auth:
+    image: postgres:13.0-alpine
+    container_name: postgres_auth
+    restart: always
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data/
+      - ./services/movies_auth/entrypoint.initdb.sh:/docker-entrypoint-initdb.d/entrypoint-initdb.sh
+  redis_auth:
+    image: redis:6.2.6-alpine
+    container_name: redis_auth
+    restart: always
+    volumes:
+      - redis_auth_data:/data

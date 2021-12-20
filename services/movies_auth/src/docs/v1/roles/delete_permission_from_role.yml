@@ -1,0 +1,33 @@
+tags:
+- "Roles"
+summary: "Remove permission from the role"
+parameters:
+- description: "Role name"
+  in: "path"
+  name: "role_name"
+  type: "string"
+  required: true
+- description: "Permission name"
+  in: "path"
+  name: "permission_name"
+  type: "string"
+  required: true
+- description: "Access token"
+  in: "header"
+  name: "Authorization"
+  required: true
+  schema:
+    $ref: "#/definitions/JWT"
+responses:
+  200:
+    description: "Deleted Successfully"
+    schema:
+      $ref: "#/definitions/RoleInfo"
+  401:
+    description: "Superuser requered"
+  404:
+    description: "Role not found"
+  409:
+    description: "Permission does not exist"
+  422:
+    description: "Bad Authorization header"
