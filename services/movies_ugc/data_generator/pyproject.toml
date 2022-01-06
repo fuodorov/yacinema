@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "data_genreator"
+version = "0.1.0"
+description = "Генератор рандомных данных для kafka"
+authors = ["Artsektor <artsektor@protonmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic = "^1.8.2"
+kafka-python = "2.0.2"
+user-agent = "^0.1.10"
+backoff = "^1.11.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
