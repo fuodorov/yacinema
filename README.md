@@ -1,12 +1,3 @@
-# UPD: Для ревью спринта 7  
-- Ссылки: 
-  - [Репозиторий проекта Auth_sprint_2](https://github.com/SamMeown/Auth_sprint_2)
-  - [DeepBlue](https://github.com/BigDeepBlue)
-- Добавили взаимодействие AsyncAPI и Auth сервисов. Неавторизованным пользователям, или пользователям без подписки (право 'pro_read') показываются фильмы с рейтингом не выше 7.0. Пользователям с подпиской показываются все фильмы, включая блокбастеры. При падении Auth сервиса изящно деградируем и продолжаем работать, считаем всех пользователей неавторизованными.
-- Прокидываем заголовок с request-id между сервисами.
-- Поправили swagger. Для нормальной работы надо заходить через nginx (то есть через порт 80), чтобы nginx добавлял заголовок с request-id [http://127.0.0.1/auth/apidocs/](http://127.0.0.1/auth/apidocs/). Ниже ссылки обновили. Аналогично надо заходить в AsyncAPI за swaggerом и для проверки взаимодействия с Auth - например [http://127.0.0.1/api/openapi](http://127.0.0.1/api/openapi)
-
-
 # Terms of Reference
 We further extend our cinema project by developing new Auth service. This is going to be highload service heavily used by almost all other services for user authentication and authorization validation.
 
