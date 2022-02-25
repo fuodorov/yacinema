@@ -1,6 +1,5 @@
 import logging
 
-import stripe
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
@@ -20,7 +19,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.on_event("startup")
 async def startup():
-    stripe.api_key = settings.stripe_secret_key
+    pass
 
 
 @app.on_event("shutdown")

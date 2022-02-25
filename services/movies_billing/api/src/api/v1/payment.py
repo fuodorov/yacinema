@@ -3,9 +3,10 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse, Response
 from fastapi.responses import RedirectResponse, PlainTextResponse
+from pydantic.main import BaseModel
 
 from core.auth import get_auth
-from services.exceptions import AlreadyHasSubscriptions
+from services.exceptions import AlreadyHasSubscriptions, NoActiveSubscription
 from services.subscription import SubscriptionService, get_subscription_service
 
 router = APIRouter()
@@ -34,9 +35,16 @@ async def create(
     response_class=PlainTextResponse,
     description='Отменить подписку',
 )
-async def cancel() -> RedirectResponse:
-    # TODO отмена подписки
-    return PlainTextResponse('Cancel TBD')
+async def cancel(
+        user_id: str = Depends(get_auth()),
+        payment_service: SubscriptionService = Depends(get_subscription_service)
+) -> PlainTextResponse:
+    try:
+        await payment_service.cancel_subscription(user_id)
+    except NoActiveSubscription:
+        return Response('Subscription not exists', status_code=HTTPStatus.CONFLICT)
+
+    return PlainTextResponse('Cancelled')
 
 
 @router.get(
@@ -64,14 +72,33 @@ async def subscription_cancel() -> PlainTextResponse:
     return PlainTextResponse('Something went wrong')
 
 
+class SubscriptionStatusScheme(BaseModel):
+    status: bool
+
+
 @router.get(
     "/subscription",
     status_code=HTTPStatus.OK,
-    response_class=HTMLResponse,
+    response_model=SubscriptionStatusScheme,
     description='Успех',
 )
 async def subscription_status(
+        user_id: str = Depends(get_auth()),
         subscription_service: SubscriptionService = Depends(get_subscription_service),
-) -> PlainTextResponse:
-    # TODO статус подписки
-    return PlainTextResponse('Status TBD')
+) -> SubscriptionStatusScheme:
+    status = await subscription_service.get_subscription_status(user_id)
+    return SubscriptionStatusScheme(status=status)
+
+
+@router.get(
+    "/users/{user_id}/subscription",
+    status_code=HTTPStatus.OK,
+    response_model=SubscriptionStatusScheme,
+    description='Запрос статуса подписки для пользователя',
+)
+async def subscription_status(
+        user_id: str,
+        subscription_service: SubscriptionService = Depends(get_subscription_service),
+) -> SubscriptionStatusScheme:
+    status = await subscription_service.get_subscription_status(user_id)
+    return SubscriptionStatusScheme(status=status)

@@ -2,9 +2,8 @@ import datetime
 import logging
 from typing import Optional
 
-from async_stripe import stripe
 from fastapi import Depends
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update, or_
 from sqlalchemy.orm import Session
 
 from core.config import settings
@@ -12,14 +11,17 @@ from db.session import get_db
 from models.customer import Customer
 from models.subscription import Status as SubscriptionStatus
 from models.subscription import Subscription
-from services.exceptions import AlreadyHasSubscriptions
+from services.exceptions import AlreadyHasSubscriptions, NoActiveSubscription
+from services.payment_processor.abstract import PaymentProcessorAbstract
+from services.payment_processor.stripe_processor import PaymentProcessorStripe
 
 
 class SubscriptionService(object):
     settings = settings
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, payment_processor: PaymentProcessorAbstract):
         self.db = db
+        self.payment_processor = payment_processor
 
     async def _get_stripe_customer_id(self, user_id: str) -> Optional[str]:
         user = await self.db.execute(
@@ -35,20 +37,19 @@ class SubscriptionService(object):
         return user.stripe_customer_id
 
     async def _create_customer(self, user_id: str):
-        customer = await stripe.Customer.create(
-            description="customer",
-        )
+        customer_id = await self.payment_processor.create_customer()
+
         await self.db.execute(
             insert(
                 Customer
             ).values(
                 user_id=user_id,
-                stripe_customer_id=customer.id
+                stripe_customer_id=customer_id
             ),
         )
-        return customer.id
+        return customer_id
 
-    async def _is_subscription_exists(self, user_id):
+    async def get_subscription_status(self, user_id: str) -> bool:
         user = await self.db.execute(
             select(
                 Subscription.id,
@@ -56,13 +57,15 @@ class SubscriptionService(object):
                 Customer, Subscription.customer_id == Customer.id
             ).where(
                 Customer.user_id == user_id,
+            ).where(
+                or_(Subscription.status == SubscriptionStatus.ACTIVE, Subscription.status == SubscriptionStatus.ENDING)
             ),
         )
         user = user.first()
         return bool(user)
 
     async def prepare_setup_payment(self, user_id: str) -> str:
-        if self._is_subscription_exists(user_id):
+        if await self.get_subscription_status(user_id):
             raise AlreadyHasSubscriptions
 
         stripe_customer_id = await self._get_stripe_customer_id(user_id)
@@ -73,21 +76,16 @@ class SubscriptionService(object):
             logging.info(f'customer {stripe_customer_id} created in stripe')
 
         logging.info(f'create session for user {stripe_customer_id}')
-        session = await stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            mode='setup',
-            customer=stripe_customer_id,
-            # todo move to config
-            success_url='http://localhost:8000/v1/subscription/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='http://localhost:8000/v1/subscription/cancel',
-        )
 
-        print(session.url)
-        return session.url
+        url = await self.payment_processor.create_setup_session(
+            stripe_customer_id,
+            settings.success_callback,
+            settings.cancel_callback
+        )
+        return url
 
     async def create_subscription(self, session_id: str, tariff_id: int):
-        session = await stripe.checkout.Session.retrieve(session_id, expand=['customer'])
-        stripe_customer_id = session.customer.id
+        stripe_customer_id = await self.payment_processor.get_sustomer_id_from_session(session_id)
 
         customer = await self.db.execute(
             select(
@@ -109,6 +107,31 @@ class SubscriptionService(object):
             ),
         )
 
+    async def cancel_subscription(self, user_id: str):
+        if not await self.get_subscription_status(user_id):
+            raise NoActiveSubscription()
 
-def get_subscription_service(db: Session = Depends(get_db)):
-    return SubscriptionService(db)
+        customer = await self.db.execute(select(Customer.id).where(Customer.user_id == user_id))
+
+        customer_id = customer.first().id
+
+        await self.db.execute(
+            update(
+                Subscription
+            ).where(
+                Subscription.customer_id == customer_id
+            ).values(
+                status=SubscriptionStatus.ENDING
+            )
+        )
+
+
+def get_payment_processor() -> PaymentProcessorAbstract:
+    return PaymentProcessorStripe(settings.stripe_secret_key)
+
+
+def get_subscription_service(
+        db: Session = Depends(get_db),
+        payment_processor=Depends(get_payment_processor)
+):
+    return SubscriptionService(db, payment_processor)
