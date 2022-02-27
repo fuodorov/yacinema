@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     project_name = 'Billing API'
     debug = True
     test = False
-    stripe_secret_key: str
+    stripe_secret_key: str = 'key'
 
     jwt_secret_key: str = '123'
     jwt_algorithm: str = 'HS256'

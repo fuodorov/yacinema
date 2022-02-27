@@ -27,7 +27,7 @@ async def shutdown():
     pass
 
 
-app.include_router(payment.router, prefix="/v1", tags=["payment"])
+app.include_router(payment.router, prefix="/billing_api/v1", tags=["payment"])
 
 origins = [
     "*",
