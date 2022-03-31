@@ -4,6 +4,7 @@
 - http://127.0.0.1/admin/
 - http://127.0.0.1/api/openapi/
 - http://127.0.0.1/auth/apidocs/
+- http://127.0.0.1/billing_api/
 
 Launch movies:
 - docker exec movies_admin python utils/sqlite_to_postgres/load_data.py
