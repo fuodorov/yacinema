@@ -29,12 +29,17 @@ SELECT
     p.id as person_id, 
     p.full_name as person_name,
     g.id as genre_id,
-    g.name as genre_name
+    g.name as genre_name,
+    f.id as file_id,
+    f.file_path as file_path,
+    f.video_width as video_width
 FROM content.film_work fw
 LEFT JOIN content.person_film_work pfw ON pfw.film_work_id = fw.id
 LEFT JOIN content.person p ON p.id = pfw.person_id
 LEFT JOIN content.genre_film_work gfw ON gfw.film_work_id = fw.id
 LEFT JOIN content.genre g ON g.id = gfw.genre_id
+LEFT JOIN content.file_film_work ffw ON ffw.film_work_id = fw.id
+LEFT JOIN content.file f ON f.id = ffw.file_id
 WHERE fw.id IN %s; 
 '''
 

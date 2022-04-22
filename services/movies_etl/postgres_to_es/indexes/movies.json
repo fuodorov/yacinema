@@ -118,6 +118,45 @@
             "analyzer": "ru_en"
           }
         }
+      },
+      "high_quality_file": {
+        "type": "nested",
+        "dynamic": "strict",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "path": {
+            "type": "text",
+            "analyzer": "ru_en"
+          }
+        }
+      },
+      "middle_quality_file": {
+        "type": "nested",
+        "dynamic": "strict",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "path": {
+            "type": "text",
+            "analyzer": "ru_en"
+          }
+        }
+      },
+      "low_quality_file": {
+        "type": "nested",
+        "dynamic": "strict",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "path": {
+            "type": "text",
+            "analyzer": "ru_en"
+          }
+        }
       }
     }
   }

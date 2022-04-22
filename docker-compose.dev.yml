@@ -1,3 +1,6 @@
+volumes:
+  minio_data:
+
 services:
   movies_admin:
     build:
@@ -8,65 +11,65 @@ services:
     ports:
       - "1337:8000"
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   movies_film_etl:
     build:
       dockerfile: Dockerfile.dev
     volumes:
       - ./services/movies_etl/:/usr/src/app/
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   movies_person_etl:
     build:
       dockerfile: Dockerfile.dev
     volumes:
       - ./services/movies_etl/:/usr/src/app/
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   movies_genre_etl:
     build:
       dockerfile: Dockerfile.dev
     volumes:
       - ./services/movies_etl/:/usr/src/app/
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   movies_async_api:
     build:
       dockerfile: Dockerfile.dev
     ports:
       - "8000:8000"
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   movies_auth:
     build:
       dockerfile: Dockerfile.dev
     ports:
       - "5000:5000"
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   elasticsearch:
     ports:
       - "9200:9200"
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   postgres:
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   redis:
     ports:
       - "6379:6379"
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   postgres_auth:
     ports:
       - "5433:5432"
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   redis_auth:
     ports:
       - "6380:6379"
     env_file:
-      - ./.env.dev
+      - ./envs/env.dev
   nginx:
     build: ./services/nginx
     container_name: nginx
@@ -81,3 +84,45 @@ services:
     ports:
       - "6831:6831"
       - "16686:16686"
+  movies_streaming_admin:
+    build:
+      dockerfile: Dockerfile.dev
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/movies_streaming_admin/:/usr/src/app/
+    ports:
+      - "1338:8000"
+    env_file:
+      - ./envs/.env.streaming.dev
+  movies_streaming_converter_api:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - minio_data:/usr/src/app/data
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./envs/.env.streaming.dev
+  minio:
+    image: minio/minio:RELEASE.2022-04-01T03-41-39Z
+    command: server /data --console-address ":9001"
+    container_name: minio
+    restart: always
+    volumes:
+      - minio_data:/data
+    env_file:
+      - ./envs/.env.dev
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+  airflow_scheduler:
+    env_file:
+      - ./envs/.env.streaming.dev
+  airflow_worker:
+    env_file:
+      - ./envs/.env.streaming.dev
+  airflow:
+    ports:
+      - "9002:8080"
+    env_file:
+      - ./envs/.env.streaming.dev
