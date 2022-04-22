@@ -10,6 +10,9 @@ volumes:
   airflow_worker_data:
   airflow_logs_data:
   airflow_data:
+  redis_auth_data:
+  postgres_auth_data:
+  postgres_billing_data:
 
 services:
   movies_admin:
@@ -102,6 +105,35 @@ services:
     restart: always
     volumes:
       - redis_auth_data:/data
+  movies_billing_api:
+    build:
+      context: ./services/movies_billing/api/
+    container_name: movies_billing_api
+    restart: on-failure
+    depends_on:
+      - postgres_billing
+      - rabbit_billing
+  movies_billing_admin:
+    build:
+      context: ./services/movies_billing/admin_panel/
+    container_name: movies_billing_admin
+    restart: on-failure
+    depends_on:
+      - postgres_billing
+      - rabbit_billing
+  postgres_billing:
+    image: postgres:13-alpine
+    container_name: postgres_billing
+    restart: always
+    volumes:
+      - ./services/movies_billing/dockerfiles/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_billing_data:/var/lib/postgresql/data
+  rabbit_billing:
+    image: rabbitmq:3.9.13
+    container_name: rabbit_billing
+    restart: always
+    logging:
+      driver: none
   movies_streaming_admin:
     build:
       context: ./services/movies_streaming_admin/

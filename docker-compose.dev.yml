@@ -84,6 +84,33 @@ services:
     ports:
       - "6831:6831"
       - "16686:16686"
+  postgres_billing:
+    ports:
+      - "5434:5432"
+    env_file:
+      - ./envs/.env.dev
+  rabbit_billing:
+    ports:
+      - "5672:5672"
+    env_file:
+      - ./envs/.env.dev
+  movies_billing_api:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./envs/.env.dev
+  movies_billing_admin:
+    build:
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/movies_billing/admin_panel:/usr/src/app/
+    ports:
+      - "8002:8000"
+    env_file:
+      - ./envs/.env.dev
   movies_streaming_admin:
     build:
       dockerfile: Dockerfile.dev

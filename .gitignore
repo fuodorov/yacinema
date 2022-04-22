@@ -75,6 +75,7 @@ coverage.xml
 
 # virtualenv
 venv/
+.venv/
 ENV/
 
 # auto generated docs
