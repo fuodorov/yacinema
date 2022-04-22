@@ -20,20 +20,20 @@ class BaseCache(ABC):
         pass
 
     @abstractmethod
-    async def get_item(self, key: str) -> Optional[Union[BaseGetAPIModel, List[BaseGetAPIModel]]]:
+    async def get(self, key: str, default=None) -> Optional[Union[BaseGetAPIModel, List[BaseGetAPIModel]]]:
         pass
 
     @abstractmethod
-    async def set_item(self, item: Union[BaseGetAPIModel, List[BaseGetAPIModel]], key: str):
+    async def set(self, item: Union[BaseGetAPIModel, List[BaseGetAPIModel]], key: str):
         pass
 
 
 class RedisCache(BaseCache):
 
-    async def get_item(self, key: str) -> Optional[Union[BaseGetAPIModel, List[BaseGetAPIModel]]]:
+    async def get(self, key: str, default=None) -> Optional[Union[BaseGetAPIModel, List[BaseGetAPIModel]]]:
         data = await self.redis.get(key)
         if not data:
-            return None
+            return default
 
         cache_logger.info('Cache hit (key %s)', key)
         data_obj = orjson.loads(data)
@@ -41,7 +41,7 @@ class RedisCache(BaseCache):
             return [self.response_model.parse_obj(obj) for obj in data_obj]
         return self.response_model.parse_obj(data_obj)
 
-    async def set_item(self, item: Union[BaseGetAPIModel, List[BaseGetAPIModel]], key: str):
+    async def set(self, item: Union[BaseGetAPIModel, List[BaseGetAPIModel]], key: str):
         if isinstance(item, list):
             item_json_obj = [sub_item.dict() for sub_item in item]
         else:

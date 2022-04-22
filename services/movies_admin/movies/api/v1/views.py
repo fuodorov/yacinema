@@ -8,6 +8,7 @@ from movies.models import FilmWork, Genre, Person, RoleType
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 
+# Pagination is set globally in the settings base file
 class PersonViewSet(ReadOnlyModelViewSet):
     serializer_class = PersonSerializer
     filter_backends = (DjangoFilterBackend,)

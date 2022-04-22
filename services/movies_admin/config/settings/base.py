@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOST').split()
+ALLOWED_HOSTS = (os.environ.get('DJANGO_ALLOWED_HOST') or '').split()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -98,3 +98,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'mediafiles'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'access-key')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', 'secret-key')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'my-local-bucket')

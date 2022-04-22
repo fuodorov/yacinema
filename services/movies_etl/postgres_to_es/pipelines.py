@@ -7,7 +7,7 @@ from typing import Generator, List
 import config
 import queries
 from elastic import ElasticsearchLoader
-from models import Film, Genre, Person, ShortFilm, ShortGenre, ShortPerson
+from models import Film, Genre, Person, ShortFilm, ShortGenre, ShortPerson, ShortFile
 from postgres import PostgresProducer
 from state import State
 from utils import coroutine
@@ -130,6 +130,12 @@ class FilmWorkPipeline(BasePipeline):
                         id=row['person_id'],
                         name=row['person_name']),
                     role=row['person_role']
+                )
+                movies[row['fw_id']].add_video(
+                    ShortFile(
+                        id=row['file_id'],
+                        path=row['file_path']),
+                    width=row['video_width']
                 )
             target.send([movie.as_dict for movie in movies.values()])
 

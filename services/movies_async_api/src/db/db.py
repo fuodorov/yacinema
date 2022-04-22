@@ -41,7 +41,7 @@ class BaseDB(ABC):
         pass
 
     @abstractmethod
-    async def get_item(self, item_id: str) -> Optional[BaseGetAPIModel]:
+    async def get(self, item_id: str) -> Optional[BaseGetAPIModel]:
         pass
 
     @abstractmethod
@@ -51,7 +51,7 @@ class BaseDB(ABC):
 
 class ElasticDB(BaseDB):
 
-    async def get_item(self, item_id: str) -> Optional[BaseGetAPIModel]:
+    async def get(self, item_id: str) -> Optional[BaseGetAPIModel]:
         try:
             doc = await self.elastic.get(index=self.index, id=item_id)
             db_logger.info('Getting item %s in %s', item_id, self.index)
@@ -101,15 +101,6 @@ class ElasticDB(BaseDB):
             filter_info['nested']['query']['match'] = {f'{field}.id': str(uuid)}
             body['query']['bool']['filter'].append(filter_info)
 
-    def _elastic_request_add_rating_filter(self, max_rating: float, body: DefaultDict[str, DefaultDict[str, dict]]):
-        if not max_rating or max_rating < 0:
-            return
-        if not body['query']['bool'].get('filter'):
-            body['query']['bool']['filter'] = []
-        filter_info = defaultdict(lambda: defaultdict(dict))
-        filter_info['range']['rating']['lte'] = max_rating
-        body['query']['bool']['filter'].append(filter_info)
-
     def _elastic_request_add_sort(self, sort_request: SortInfo, body: DefaultDict[str, DefaultDict[str, dict]]):
         if not sort_request:
             return
@@ -127,7 +118,5 @@ class ElasticDB(BaseDB):
             self._elastic_request_add_filter(query_info.filter, body)
         if query_info.sort:
             self._elastic_request_add_sort(query_info.sort, body)
-        if query_info.max_rating:
-            self._elastic_request_add_rating_filter(query_info.max_rating, body)
 
         return body

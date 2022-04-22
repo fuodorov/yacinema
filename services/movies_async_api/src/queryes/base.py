@@ -27,7 +27,6 @@ class ServiceQueryInfo(BaseModel):
     filter: Optional[FilterInfo] = None
     sort: Optional[SortInfo] = None
     query: Optional[str] = None
-    max_rating: Optional[float]
 
     def as_key(self):
         """
@@ -42,9 +41,7 @@ class ServiceQueryInfo(BaseModel):
                                            desc=int(self.sort.desc)) if self.sort else None
         query_key = self.query
 
-        max_rating_key = self.max_rating
-
-        key = f'{page_key}:{filter_key}:{sort_key}:{query_key}:{max_rating_key}'
+        key = f'{page_key}:{filter_key}:{sort_key}:{query_key}'
         return key
 
 

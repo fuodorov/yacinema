@@ -30,7 +30,7 @@ class JsonFileStorage(BaseStorage):
     def retrieve_state(self) -> Optional[dict]:
         if self.file_path is None:
             module_logger.warning('No state file provided. Continue with in-memory state')
-            return None
+            return {}
 
         try:
             with open(self.file_path, 'r') as f:
@@ -38,7 +38,7 @@ class JsonFileStorage(BaseStorage):
             return data
         except FileNotFoundError:
             self.save_state({})
-        return None
+        return {}
 
 
 class State:
